@@ -61,12 +61,12 @@ include('includes/navbar.php');
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
-  <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Manage Suppliers
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addadminprofile">
+  <div class="card-header py-3 d-flex justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">Manage Suppliers</h6>
+    <button type="button" class="btn btn-primary f" data-toggle="modal" data-target="#addadminprofile">
               Add New Suppliers
-            </button>
-    </h6>
+    </button>
+    
   </div>
 
   <div class="card-body">
@@ -95,14 +95,14 @@ include('includes/navbar.php');
                  
                 ?>
                 <tr>
-                  <td><?= $supplier['id'];?></td>
+                  <td class="user_id"><?= $supplier['id'];?></td>
                   <td><?= $supplier['name'];?></td>
                   <td><?= $supplier['email'];?></td>
                   <td><?= $supplier['phone'];?></td>
                   <td><?= $supplier['address'];?></td>
                   <td>
-                    <a href="" class="btn btn-info btn-sm">View</a>
-                    <a href="" class="btn btn-success btn-sm">Edit</a>
+                    <a href="" class="btn btn-info btn-sm view_data">View</a>
+                    <a href="#" class="btn btn-success btn-sm edit-data">Edit</a>
                     <a href="" class="btn btn-danger btn-sm">Delete</a>
                     
                   </td>
@@ -135,3 +135,29 @@ include('includes/navbar.php');
 include('includes/scripts.php');
 include('includes/footer.php');
 ?>
+
+<script>
+  $(document).ready(function(){
+    $('.view_data').click(function (e){
+      e.preventDefault();
+
+      // console.log('Hello');
+
+      var user_id = $(this).closest('tr').find('.user_id').text();
+      // console.log(user_id);
+
+      $.ajax({
+        method: "POST",
+        url: "supplier.php",
+        data: {
+          'click_view_btn': true,
+          'user_id': user_id,
+        },
+        success: function (response){
+            console.log(response);                                                                                                                 
+        }
+      });
+
+    })
+  });
+</script>
