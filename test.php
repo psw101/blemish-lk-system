@@ -1,76 +1,97 @@
 <?php
 session_start();
-include('includes/header.php'); 
-include('includes/navbar.php'); 
+include('includes/header.php');
+include('includes/navbar.php');
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary ml-3" data-bs-toggle="modal" data-bs-target="#insertdata">
-  Insert Data
-</button>
-
-<!-- Show Inser data status -->
- <?php
-    if(isset($_SESSION['status']) && $_SESSION['status'] !=''){
-        echo $_SESSION['status'];
-        unset($_SESSION['status']);
+<style>
+    .modal {
+        color: black;
+        font-weight: 500;
     }
- ?>
+</style>
 
-<!-- Modal -->
-<div class="modal fade" id="insertdata" tabindex="-1" aria-labelledby="insertdataLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title fs-5" id="insertdataLabel">Insert Data</h3>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <form action="code.php" method="POST">
-        <div class="modal-body">
-            
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" name="name" placeholder="Enter Name">
+<!--Insert Modal Start-->
+<div class="modal fade" id="insertdata" tabindex="-1" role="dialog" aria-labelledby="insertdataLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="insertdataLabel">Add Suppliers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" name="email" placeholder="Enter Email">
-            </div>
+            <form action="code.php" method="POST">
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label for="name">Supplier Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="enter name">
+                    </div>
 
-            <div class="form-group">
-                <label for="number">Phone</label>
-                <input type="number" class="form-control" name="phone" placeholder="Enter Phone">
-            </div>
+                    <div class="form-group">
+                        <label for="email">Supplier Email</label>
+                        <input type="text" class="form-control" name="email" placeholder="enter email">
+                    </div>
 
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" class="form-control" name="address" placeholder="Enter Address">
-            </div>
+                    <div class="form-group">
+                        <label for="phone">Supplier Contact No</label>
+                        <input type="text" class="form-control" name="phone" placeholder="enter number">
+                    </div>
 
-            
+                    <div class="form-group">
+                        <label for="address">Supplier Address</label>
+                        <input type="text" class="form-control" name="address" placeholder="enter address">
+                    </div>
 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="save_data" class="btn btn-primary">Add Supplier</button>
+                </div>
+            </form>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" name="save_data" class="btn btn-primary">Save Data</button>
-        </div>
-      </form>
     </div>
-  </div>
 </div>
-</body>
-</html>
+<!--Insert Modal End-->
 
+<div class="container bg-white mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <?php
+            if (isset($_SESSION['status']) && $_SESSION['status'] != '') {
+                
+            ?>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Hey !</strong> <?php echo $_SESSION['status']; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+            <?php
+                unset($_SESSION['status']);
+            }
+            ?>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
+                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
+                        Add Suppliers
+                    </button>
+                </div>
+
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
 
 
 <?php
