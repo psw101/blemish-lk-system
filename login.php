@@ -16,6 +16,58 @@
 </head>
 
 <body>
+  <?php
+  // Initialize variables
+  $username = $password = "";
+  $username_err = $password_err = "";
+
+  // Check if the form was submitted
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Validate username
+    if (empty(trim($_POST["username"]))) {
+      $username_err = "Please enter a username.";
+    } else {
+      $username = trim($_POST["username"]);
+    }
+
+    // Validate password
+    if (empty(trim($_POST["password"]))) {
+      $password_err = "Please enter a password.";
+    } else {
+      $password = trim($_POST["password"]);
+    }
+
+    // If there are no errors, you can process the data (e.g., check credentials in a database)
+    if (empty($username_err) && empty($password_err)) {
+      // Simulate a check with hardcoded credentials (replace with your database logic)
+      $password_hash = hash('sha256', $password); // Hash the password
+      include_once './dbcon.php';
+      $sql = "SELECT username FROM users WHERE username = '$username'";
+      $result = mysqli_query($con, $sql);
+      if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        if ($row['username'] == $username) {
+          $sql_retreive_password = "SELECT password FROM users WHERE username = '$username'";
+          $result_retreive_password = mysqli_query($con, $sql_retreive_password);
+          if ($result_retreive_password) {
+            $password_hash_db = mysqli_fetch_assoc($result_retreive_password)['password'];
+            if ($password_hash_db == $password_hash) {
+              echo "<div class='alert alert-success' role='alert'>Login successful!</div>";
+              header("Location: index.php");
+              exit();
+            } else {
+              echo "<div class='alert alert-danger' role='alert'>Invalid username or password!</div>";
+            }
+          }
+        } else {
+          echo "<div class='alert alert-danger' role='alert'>Invalid username!</div>";
+        }
+      }
+    }
+  }
+  ?>
+
   <section class="vh-100">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -29,7 +81,7 @@
               <div class="col-md-6 col-lg-7 d-flex align-items-center">
                 <div class="card-body p-4 p-lg-5 text-black">
 
-                  <form>
+                  <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
                     <div class="d-flex align-items-center mb-3 pb-1">
                       <img src="./img/site-logo.png" alt="logo" width="20%" style="border-radius: 50%; display: block;">
@@ -44,12 +96,12 @@
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-4">
-                      <input type="password" id="form2Example27" class="form-control form-control-lg" />
-                      <label class="form-label" for="form2Example27">Password</label>
+                      <input type="password" id="password" class="form-control form-control-lg" />
+                      <label class="form-label" for="password">Password</label>
                     </div>
 
                     <div class="pt-1 mb-4">
-                      <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="button">Login</button>
+                      <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                     </div>
 
                     <a class="small text-muted" href="#!">Forgot password?</a>
