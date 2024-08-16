@@ -9,7 +9,7 @@ include('includes/navbar.php');
   require('dbcon.php');
 ?>
 
-
+<!-- Add New Supplier Modal -->
 <div class="modal fade" id="addadminprofile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   
   
@@ -55,6 +55,8 @@ include('includes/navbar.php');
 </div>
 
 
+
+
 <div class="container-fluid">
 
 <!-- DataTales Example -->
@@ -79,6 +81,7 @@ include('includes/navbar.php');
             <th>Email </th>
             <th>Contact No</th>
             <th>Address </th>
+            <th>Action </th>
           </tr>
         </thead>
         <tbody>
@@ -97,6 +100,12 @@ include('includes/navbar.php');
                   <td><?= $supplier['email'];?></td>
                   <td><?= $supplier['phone'];?></td>
                   <td><?= $supplier['address'];?></td>
+                  <td>
+                    <a href="" class="btn btn-info btn-sm">View</a>
+                    <a href="" class="btn btn-success btn-sm">Edit</a>
+                    <a href="" class="btn btn-danger btn-sm">Delete</a>
+                    
+                  </td>
                 </tr>
                 <?php
               }
