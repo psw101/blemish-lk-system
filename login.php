@@ -1,64 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
 
-<?php
-include('includes/header.php'); 
-include('includes/navbar.php'); 
-?>
+<body>
+<section class="vh-100" style="background-color: #9A616D;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          <div class="row g-0">
+            <div class="col-md-6 col-lg-5 d-none d-md-block">
+              <img src="./img/undraw_posting_photo.svg"
+                alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+            </div>
+            <div class="col-md-6 col-lg-7 d-flex align-items-center">
+              <div class="card-body p-4 p-lg-5 text-black">
 
+                <form>
 
+                  <div class="d-flex align-items-center mb-3 pb-1">
+                    <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
+                    <span class="h1 fw-bold mb-0">Logo</span>
+                  </div>
 
-<div class="container">
+                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
 
-<!-- Outer Row -->
-<div class="row justify-content-center">
+                  <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="email" id="form2Example17" class="form-control form-control-lg" />
+                    <label class="form-label" for="form2Example17">Email address</label>
+                  </div>
 
-  <div class="col-xl-6 col-lg-6 col-md-6">
+                  <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="password" id="form2Example27" class="form-control form-control-lg" />
+                    <label class="form-label" for="form2Example27">Password</label>
+                  </div>
 
-    <div class="card o-hidden border-0 shadow-lg my-5">
-      <div class="card-body p-0">
-        <!-- Nested Row within Card Body -->
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="p-5">
-              <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Login Here!</h1>
-                <?php
+                  <div class="pt-1 mb-4">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="button">Login</button>
+                  </div>
 
-                    if(isset($_SESSION['status']) && $_SESSION['status'] !='') 
-                    {
-                        echo '<h2 class="bg-danger text-white"> '.$_SESSION['status'].' </h2>';
-                        unset($_SESSION['status']);
-                    }
-                ?>
-              </div>
-
-                <form class="user" action="logincode.php" method="POST">
-
-                    <div class="form-group">
-                    <input type="email" name="emaill" class="form-control form-control-user" placeholder="Enter Email Address...">
-                    </div>
-                    <div class="form-group">
-                    <input type="password" name="passwordd" class="form-control form-control-user" placeholder="Password">
-                    </div>
-            
-                    <button type="submit" name="login_btn" class="btn btn-primary btn-user btn-block"> Login </button>
-                    <hr>
+                  <a class="small text-muted" href="#!">Forgot password?</a>
+                  <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="#!"
+                      style="color: #393f81;">Register here</a></p>
+                  <a href="#!" class="small text-muted">Terms of use.</a>
+                  <a href="#!" class="small text-muted">Privacy policy</a>
                 </form>
 
-
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
-
-</div>
-
-</div>
+</section>
 
 
-<?php
-include('includes/scripts.php'); 
-?>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+
+</html>
