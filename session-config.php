@@ -2,7 +2,7 @@
 // config.php
 
 // Define the timeout duration (in seconds)
-$timeout_duration = 60; // 15 minutes
+$timeout_duration = 6000; // 1 hour
 
 // Set session cookie parameters
 session_set_cookie_params([

@@ -20,8 +20,8 @@
 
   <script>
           document.addEventListener('DOMContentLoaded', function() {
-              var timeoutDuration = 1 * 60 * 1000; // 30 minutes
-              var warningTime = 1 * 30 * 1000; // 5 minutes warning
+              var timeoutDuration = 60 * 60 * 1000; // 1 hour
+              var warningTime = 55 * 60 * 1000; // 5 minutes
 
               var sessionTimeout = setTimeout(function() {
                   // Show the Bootstrap modal
