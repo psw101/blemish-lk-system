@@ -52,7 +52,7 @@ include('includes/navbar.php');
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     <button type="submit" name="save_data" class="btn btn-primary">Add Supplier</button>
                 </div>
             </form>
@@ -62,12 +62,12 @@ include('includes/navbar.php');
 <!--Insert Modal End-->
 
 <!-- View Modal Start -->
-<div class="modal fade" id="viewusermodal" tabindex="-1" role="dialog" aria-labelledby="viewusermodalLabel" aria-hidden="true">
+<div class="modal fade" id="viewuser" tabindex="-1" role="dialog" aria-labelledby="viewuserLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="viewusermodalLabel">View Supplier Details</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title" id="viewuserLabel">View Supplier Details</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -77,14 +77,14 @@ include('includes/navbar.php');
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 <!--View Modal End-->
 
-<div class="container  mt-5">
+<div class="container-fluid  mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <!-- Success messge show start -->
@@ -116,7 +116,7 @@ include('includes/navbar.php');
                 </div>
 
                 <div class="card-body bg-light" style="max-height: 60vh; overflow-y: auto;">
-                    <table class="table table-bordered table-hover table-responsive">
+                    <table class="table table-bordered table-hover" width="100%" p-3>
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
@@ -203,7 +203,7 @@ include('includes/footer.php');
                     // console.log(response);
 
                     $('.view_user_data').html(response);
-                    $('#viewusermodal').modal('show');
+                    $('#viewuser').modal('show');
 
                 }
             });
