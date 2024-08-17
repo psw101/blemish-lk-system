@@ -1,9 +1,20 @@
 <?php
+// Include the configuration file
+include_once './session-config.php';
+
+// Check if the user is logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+  // Redirect to login page
+  header("Location: login.php");
+  exit();
+}
+
 use includes\header;
 use includes\navbar;
 
 include_once 'includes/header.php';
 include_once 'includes/navbar.php';
+
 ?>
 
 
@@ -29,7 +40,7 @@ include_once 'includes/navbar.php';
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Registered Admin</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">
 
-               <h4>Total Admin: *</h4>
+                <h4>Total Admin: *</h4>
 
               </div>
             </div>
@@ -103,10 +114,28 @@ include_once 'includes/navbar.php';
     </div>
   </div>
 
-  
+
 
   <!-- Content Row -->
 
+
+  <!-- Bootstrap Modal for session timeout warning -->
+  <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sessionTimeoutModalLabel">Session Timeout Warning</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Your session is about to expire. Please save your work to avoid losing any unsaved data.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 
@@ -115,6 +144,6 @@ include_once 'includes/navbar.php';
 
 
   <?php
-include('includes/scripts.php');
-include('includes/footer.php');
-?>
+  include('includes/scripts.php');
+  include('includes/footer.php');
+  ?>

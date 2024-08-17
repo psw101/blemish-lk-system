@@ -1,3 +1,80 @@
+<?php
+// Path: login.php
+
+// Include the configuration file
+include_once './session-config.php';
+
+include_once './popup-util.php';
+// Initialize variables
+$username = $password = "";
+$username_err = $password_err = "";
+
+// Check if the form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  // Validate username
+  if (empty(trim($_POST["username"]))) {
+    $username_err = "Please enter a username.";
+  } else {
+    $username = trim($_POST["username"]);
+  }
+
+  // Validate password
+  if (empty(trim($_POST["password"]))) {
+    $password_err = "Please enter a password.";
+  } else {
+    $password = trim($_POST["password"]);
+  }
+
+  // If there are no errors, process the data
+  if (empty($username_err) && empty($password_err)) {
+
+    // Hash the input password
+    $password_hash = hash('sha256', $password);
+
+    // Prepare and execute the SQL statement with prepared statements to prevent SQL injection
+    include_once './dbcon.php';
+    $sql = "SELECT username, password FROM users WHERE username = ?";
+    if ($stmt = mysqli_prepare($con, $sql)) {
+      // Bind the input parameter to the prepared statement
+      mysqli_stmt_bind_param($stmt, "s", $param_username);
+      $param_username = $username;
+
+      // Execute the statement
+      if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_store_result($stmt);
+        // Check if the username exists, if yes then verify the password
+        if (mysqli_stmt_num_rows($stmt) == 1) {
+          // Bind the result variables
+          mysqli_stmt_bind_result($stmt, $db_username, $db_password_hash);
+
+          if (mysqli_stmt_fetch($stmt)) {
+            $db_password_hash = strtolower($db_password_hash);
+            if ($password_hash === $db_password_hash) {
+              // Password is correct, so start a new session
+              $_SESSION['loggedin'] = true;
+              $_SESSION['username'] = $username;
+              header("Location: ./index.php");
+              exit();
+            } else {
+              display_alert("Invalid password!", false);
+            }
+          }
+        } else {
+          display_alert("Username not found!", false);
+        }
+      } else {
+        display_alert("Oops! Something went wrong. Please try again later.", false);
+      }
+
+      // Close the statement
+      mysqli_stmt_close($stmt);
+    }
+  }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,58 +93,6 @@
 </head>
 
 <body>
-  <?php
-  // Initialize variables
-  $username = $password = "";
-  $username_err = $password_err = "";
-
-  // Check if the form was submitted
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // Validate username
-    if (empty(trim($_POST["username"]))) {
-      $username_err = "Please enter a username.";
-    } else {
-      $username = trim($_POST["username"]);
-    }
-
-    // Validate password
-    if (empty(trim($_POST["password"]))) {
-      $password_err = "Please enter a password.";
-    } else {
-      $password = trim($_POST["password"]);
-    }
-
-    // If there are no errors, you can process the data (e.g., check credentials in a database)
-    if (empty($username_err) && empty($password_err)) {
-      // Simulate a check with hardcoded credentials (replace with your database logic)
-      $password_hash = hash('sha256', $password); // Hash the password
-      include_once './dbcon.php';
-      $sql = "SELECT username FROM users WHERE username = '$username'";
-      $result = mysqli_query($con, $sql);
-      if ($result) {
-        $row = mysqli_fetch_assoc($result);
-        if ($row['username'] == $username) {
-          $sql_retreive_password = "SELECT password FROM users WHERE username = '$username'";
-          $result_retreive_password = mysqli_query($con, $sql_retreive_password);
-          if ($result_retreive_password) {
-            $password_hash_db = mysqli_fetch_assoc($result_retreive_password)['password'];
-            if ($password_hash_db == $password_hash) {
-              echo "<div class='alert alert-success' role='alert'>Login successful!</div>";
-              header("Location: index.php");
-              exit();
-            } else {
-              echo "<div class='alert alert-danger' role='alert'>Invalid username or password!</div>";
-            }
-          }
-        } else {
-          echo "<div class='alert alert-danger' role='alert'>Invalid username!</div>";
-        }
-      }
-    }
-  }
-  ?>
-
   <section class="vh-100">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -90,18 +115,18 @@
 
                     <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
 
-                    <div data-mdb-input-init class="form-outline mb-4">
-                      <input type="username" id="username" class="form-control form-control-lg" />
+                    <div class="form-outline mb-4">
+                      <input type="text" name="username" id="username" class="form-control form-control-lg" />
                       <label class="form-label" for="username">Username</label>
                     </div>
 
-                    <div data-mdb-input-init class="form-outline mb-4">
-                      <input type="password" id="password" class="form-control form-control-lg" />
+                    <div class="form-outline mb-4">
+                      <input type="password" name="password" id="password" class="form-control form-control-lg" />
                       <label class="form-label" for="password">Password</label>
                     </div>
 
                     <div class="pt-1 mb-4">
-                      <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                      <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                     </div>
 
                     <a class="small text-muted" href="#!">Forgot password?</a>
