@@ -61,8 +61,8 @@
 
   <?php
 
-
-    $connection = mysqli_connect("localhost", "root", "", "blemishdb");
+    include_once('./dbcon.php');
+    $connection = $con;
 
     if (isset($_POST['registerbtn'])) {
         $username = $_POST['username'];
