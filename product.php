@@ -218,7 +218,7 @@ include('includes/navbar.php');
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editdataLabel">Edit Supplier Details</h5>
+                <h5 class="modal-title" id="editdataLabel">Edit Product Details</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
