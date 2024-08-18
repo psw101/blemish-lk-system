@@ -90,11 +90,11 @@ if(isset($_POST['update_data'])){
 
     if($update_query_run){
         $_SESSION['status'] = "Data updated successfully !";
-        header('Location: test.php');
+        header('Location: supplier.php');
     }
     else{
         $_SESSION['status'] = "Data updation failed !";
-        header('Location: test.php');
+        header('Location: supplier.php');
     }
 }
 //update data end
