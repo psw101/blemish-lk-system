@@ -84,6 +84,56 @@ include('includes/navbar.php');
 </div>
 <!--View Modal End-->
 
+<!--Edit Modal Start-->
+<div class="modal fade" id="editdata" tabindex="-1" role="dialog" aria-labelledby="editdataLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editdataLabel">Edit Supplier Details</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="code.php" method="POST">
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        
+                        <input type="hidden" class="form-control" id="supplier_id" name="id">
+                    </div> 
+
+                    <div class="form-group mb-3">
+                        <label for="name">Supplier Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="enter name">
+                    </div> 
+                    <!-- id use for jquery, name use for php -->
+
+                    <div class="form-group">
+                        <label for="email">Supplier Email</label>
+                        <input type="text" class="form-control" id="email" name="email" placeholder="enter email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Supplier Contact No</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="enter number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Supplier Address</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="enter address">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="update_data" class="btn btn-primary">Update Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Edit Modal End-->
+
 <div class="container-fluid  mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -110,7 +160,7 @@ include('includes/navbar.php');
             <div class="card">
                 <div class="card-header">
                     <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
-                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
+                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#editdata">
                         Add Suppliers
                     </button>
                 </div>
@@ -147,10 +197,10 @@ include('includes/navbar.php');
                                                 <a href="#" class="btn btn-primary btn-sm view_data">View</a>
                                             </td>
                                             <td>
-                                                <a href="" class="btn btn-success btn-sm">Edit</a>
+                                                <a href="#" class="btn btn-success btn-sm edit_data">Edit</a>
                                             </td>
                                             <td>
-                                                <a href="" class="btn btn-danger btn-sm">Delete</a>
+                                                <a href="#" class="btn btn-danger btn-sm delete_btn" onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
                                             </td>
                                         </tr>
                                         <?php
@@ -184,6 +234,7 @@ include('includes/footer.php');
 ?>
 
 <script>
+    //view data start
     $(document).ready(function(){
         $('.view_data').click(function(e){
             e.preventDefault();
@@ -211,4 +262,79 @@ include('includes/footer.php');
 
         })
     });
+    //view data end
+
+
+    // Edit data start
+    $(document).ready(function(){
+        $('.edit_data').click(function(e){
+            e.preventDefault();
+
+            
+            var user_id = $(this).closest('tr').find('.user_id').text();
+            // console.log(user_id);
+
+            $.ajax({
+                method: "POST",
+                url: "code.php",
+                data: {
+                    'click_edit_btn': true,
+                    'user_id': user_id,
+                },
+                success: function(response){
+                    // console.log(response);
+
+                    $.each(response, function(key, value){
+                        // console.log(value['name']);
+                        $('#supplier_id').val(value['id']);
+                        $('#name').val(value['name']);
+                        $('#email').val(value['email']);
+                        $('#phone').val(value['phone']);
+                        $('#address').val(value['address']);
+                        //id,name,email,.. are database column names.    user_id,name,email,.. are form's field ids used in modal
+                        
+                    });
+
+                    
+                    $('#editdata').modal('show');
+
+                }
+            });
+
+
+        })
+    });
+    // Edit data end
+
+    //Delete data start
+    $(document).ready(function(){
+        $('.delete_btn').click(function(e){
+            e.preventDefault();
+
+            
+            var user_id = $(this).closest('tr').find('.user_id').text();
+            // console.log(supplier_id);
+
+            $.ajax({
+                method: "POST",
+                url: "code.php",
+                data: {
+                    'click_delete_btn': true,
+                    'user_id': user_id,
+                },
+                success: function(response){
+                    console.log(response);
+                    window.location.reload();
+
+                    // $('.view_user_data').html(response);
+                    // $('#viewuser').modal('show');
+
+                }
+            });
+
+            
+
+        })
+    });
+    //Delete data end
 </script>
