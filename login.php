@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="pt-1 mb-4">
-                      <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                      <button class="btn btn-primary  btn-block btn-lg px-5" type="submit">Login</button>
                     </div>
 
                     <a class="small text-muted" href="#!">Forgot password?</a>

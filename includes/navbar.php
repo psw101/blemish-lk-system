@@ -19,37 +19,34 @@
     <span>Dashboard</span></a>
 </li>
 
-<!-- Divider -->
-<hr class="sidebar-divider">
-
-<!-- Heading -->
-<div class="sidebar-heading">
-  Pages
-</div>
+<hr class="sidebar-divider my-0">
 
 <li class="nav-item">
   <a class="nav-link" href="supplier.php">
     <i class="fas fa-fw fa-chart-area"></i>
-    <span>Manage Suppliers</span></a>
+    <span>Suppliers</span></a>
 </li>
 
+<hr class="sidebar-divider my-0">
+
 <li class="nav-item">
-  <a class="nav-link" href="register.php">
+  <a class="nav-link" href="index.php">
     <i class="fas fa-fw fa-chart-area"></i>
-    <span>Manage Products</span></a>
+    <span>Suppliers</span></a>
 </li>
 
-<li class="nav-item">
-  <a class="nav-link" href="register.php">
-    <i class="fas fa-fw fa-folder"></i>
-    <span>Manage Stocks</span></a>
-</li>
+<hr class="sidebar-divider my-0">
 
 <li class="nav-item">
-  <a class="nav-link" href="register.php">
+  <a class="nav-link" href="index.php">
     <i class="fas fa-fw fa-chart-area"></i>
-    <span>Selling</span></a>
+    <span>Suppliers</span></a>
 </li>
+
+<hr class="sidebar-divider my-0">
+
+
+
 
 <!-- Nav Item - Pages Collapse Menu -->
 <!-- <li class="nav-item">
@@ -68,22 +65,8 @@
 
 
 
-<!-- Divider -->
-<hr class="sidebar-divider">
-
-<!-- Heading -->
-<div class="sidebar-heading">
-  Addons
-</div>
 
 
-
-<!-- Nav Item - Charts -->
-<li class="nav-item">
-  <a class="nav-link" href="charts.html">
-    <i class="fas fa-fw fa-chart-area"></i>
-    <span>Charts</span></a>
-</li>
 
 
 <!-- Divider -->
