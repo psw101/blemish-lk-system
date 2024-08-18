@@ -41,7 +41,7 @@
 <hr class="sidebar-divider my-0">
 
 <li class="nav-item">
-  <a class="nav-link" href="index.php">
+  <a class="nav-link" href="orders.php">
     <i class="fas fa-fw fa-chart-area"></i>
     <span>Inventory</span></a>
     
