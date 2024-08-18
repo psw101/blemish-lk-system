@@ -1,9 +1,16 @@
 <?php
 // Path: login.php
+session_start(); // Start the session at the very beginning
+
+// Check if the user is already logged in
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+  header("Location: ./session_info.php");
+  exit();
+}
+
 
 // Include the configuration file
 include_once './session-config.php';
-
 include_once './popup-util.php';
 // Initialize variables
 $username = $password = "";
@@ -141,6 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
     </div>
   </section>
+
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
