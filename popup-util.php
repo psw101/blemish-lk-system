@@ -4,10 +4,10 @@ function display_alert($message, $is_success = false) {
     
     echo "
     <div class='alert alert-$alert_type alert-dismissible fade show' role='alert' style='
-        position: fixed; 
-        top: 20px; 
-        left: 50%; 
-        transform: translateX(-50%); 
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 9999;
         padding: 0.5rem;
         margin: 0;
@@ -34,4 +34,8 @@ function display_alert($message, $is_success = false) {
     </script>
     ";
 }
+
+
 ?>
+
+
