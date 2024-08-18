@@ -9,7 +9,8 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title> Funda of Web IT | Admin Panel</title>
+  <title> Blemish LK</title>
+  <link rel="icon" href="./img/site-logo.png" type="image/png">
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

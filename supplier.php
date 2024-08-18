@@ -23,7 +23,7 @@ include('includes/navbar.php');
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="insertdataLabel">Add Suppliers</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -37,12 +37,12 @@ include('includes/navbar.php');
 
                     <div class="form-group">
                         <label for="email">Supplier Email</label>
-                        <input type="text" class="form-control" name="email" placeholder="enter email">
+                        <input type="email" class="form-control" name="email" placeholder="enter email">
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Supplier Contact No</label>
-                        <input type="text" class="form-control" name="phone" placeholder="enter number">
+                        <input type="number" class="form-control" name="phone" placeholder="enter number">
                     </div>
 
                     <div class="form-group">
@@ -52,8 +52,8 @@ include('includes/navbar.php');
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" name="save_data" class="btn btn-primary">Add Supplier</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="save_supp_data" class="btn btn-primary">Add Supplier</button>
                 </div>
             </form>
         </div>
@@ -160,7 +160,7 @@ include('includes/navbar.php');
             <div class="card">
                 <div class="card-header">
                     <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
-                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#editdata">
+                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
                         Add Suppliers
                     </button>
                 </div>
@@ -338,3 +338,13 @@ include('includes/footer.php');
     });
     //Delete data end
 </script>
+
+
+
+
+
+<!-- haminima start -->
+<?php
+
+?>
+<!-- haminima end -->

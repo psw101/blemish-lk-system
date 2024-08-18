@@ -3,7 +3,7 @@ session_start();
 require 'dbcon.php';
 
 // Insert data start
-if (isset($_POST['save_data'])) {
+if (isset($_POST['save_supp_data'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
@@ -14,10 +14,10 @@ if (isset($_POST['save_data'])) {
 
     if ($insert_query_run) {
         $_SESSION['status'] = "Data inserted successfully !";
-        header('Location: test2.php');
+        header('Location: supplier.php');
     } else {
         $_SESSION['status'] = "Insertion of data failed !";
-        header('Location: test2.php');
+        header('Location: supplier.php');
     }
 }
 // Insert data end
