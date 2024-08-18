@@ -2,7 +2,7 @@
 session_start();
 require('dbcon.php');
 
-/* code.php file start */
+/* --------------------------------------------------------------------------------code.php file start-------------------------------------------------------------------- */
 
 // Insert data start
 if (isset($_POST['save_supp_data'])) {
@@ -145,7 +145,7 @@ include('includes/navbar.php');
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="insertdataLabel">Add Suppliers</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -174,7 +174,7 @@ include('includes/navbar.php');
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" name="save_supp_data" class="btn btn-primary">Add Supplier</button>
                 </div>
             </form>
@@ -281,7 +281,7 @@ include('includes/navbar.php');
             <!-- Manage suppliers card -->
             <div class="card">
                 <div class="card-header">
-                    <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
+                    <h4 class="text-dark fw-bold">MANAGE USERS</h4>
                     <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
                         Add Suppliers
                     </button>

@@ -2,16 +2,17 @@
 session_start();
 require('dbcon.php');
 
-/* code.php file start */
+/* --------------------------------------------------------------------------------code.php file start-------------------------------------------------------------------- */
 
 // Insert data start
 if (isset($_POST['save_supp_data'])) {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
+    $productname = $_POST['productname'];
+    $productdes = $_POST['productdes'];
+    $productcategory = $_POST['category'];
+    $sellprice = $_POST['productprice'];
+    
 
-    $insert_query = "INSERT INTO supplier(name,email,phone,address) VALUES ('$name', '$email', '$phone', '$address')";
+    $insert_query = "INSERT INTO product(product_name,product_des,categories_id,sellPrice) VALUES ('$productname', '$productdes', '$productcategory', '$sellprice')";
     $insert_query_run = mysqli_query($con, $insert_query);
 
     if ($insert_query_run) {
@@ -31,17 +32,17 @@ if (isset($_POST['click_view_btn'])) {
     $user_id = $_POST['user_id'];
 
     // Fetch user data based on $user_id from the database
-    $query = "SELECT * FROM supplier WHERE id = '$user_id'";
+    $query = "SELECT * FROM product WHERE product_id = '$user_id'";
     $query_run = mysqli_query($con, $query);
 
     if (mysqli_num_rows($query_run) > 0) {
         $user_data = mysqli_fetch_assoc($query_run);
         // Assuming you want to return the data in some format (e.g., HTML or JSON)
         // Here is an example of returning the data as HTML
-        echo "<p>Name: " . $user_data['name'] . "</p>";
-        echo "<p>Email: " . $user_data['email'] . "</p>";
-        echo "<p>Phone: " . $user_data['phone'] . "</p>";
-        echo "<p>Address: " . $user_data['address'] . "</p>";
+        echo "<p>Name: " . $user_data['product_name'] . "</p>";
+        echo "<p>Email: " . $user_data['product_des'] . "</p>";
+        echo "<p>Phone: " . $user_data['categories_id'] . "</p>";
+        echo "<p>Address: " . $user_data['sellPrice'] . "</p>";
     } else {
         echo "No data found for this user.";
     }
@@ -144,7 +145,7 @@ include('includes/navbar.php');
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="insertdataLabel">Add Suppliers</h5>
+                <h5 class="modal-title" id="insertdataLabel">Add Products</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -153,23 +154,29 @@ include('includes/navbar.php');
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                 <div class="modal-body">
                     <div class="form-group mb-3">
-                        <label for="name">Supplier Name</label>
-                        <input type="text" class="form-control" name="name" placeholder="enter name">
+                        <label for="productname">Product Name</label>
+                        <input type="text" class="form-control" name="productname" placeholder="Enter product name">
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Supplier Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="enter email">
+                        <label for="productdes">Product Description</label>
+                        <input type="text" class="form-control" name="productdes" placeholder="Enter description">
+                    </div>
+                    
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select class="form-control" name="category">
+                            <option value="Tshirt">T-shirt</option>
+                            <option value="Shirt">Shirt</option>
+                            <option value="trousers">Trousers</option>
+                            <option value="skirts">Skirts</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="phone">Supplier Contact No</label>
-                        <input type="number" class="form-control" name="phone" placeholder="enter number">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="address">Supplier Address</label>
-                        <input type="text" class="form-control" name="address" placeholder="enter address">
+                        <label for="productprice">Sell Price</label>
+                        <input type="number" class="form-control" name="productprice" placeholder="Selling price">
                     </div>
 
                 </div>
@@ -188,7 +195,7 @@ include('includes/navbar.php');
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewuserLabel">View Supplier Details</h5>
+                <h5 class="modal-title" id="viewuserLabel">View Product Details</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -281,9 +288,9 @@ include('includes/navbar.php');
             <!-- Manage suppliers card -->
             <div class="card">
                 <div class="card-header">
-                    <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
+                    <h4 class="text-dark fw-bold">MANAGE PRODUCTS</h4>
                     <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
-                        Add Suppliers
+                        Add Products
                     </button>
                 </div>
 
@@ -293,9 +300,9 @@ include('includes/navbar.php');
                             <tr>
                                 <th scope="col">ID</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Phone No</th>
-                                <th scope="col">Address</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Sell Price</th>
                                 <th scope="col">View</th>
                                 <th scope="col">Edit</th>
                                 <th scope="col">Delete</th>
@@ -303,18 +310,18 @@ include('includes/navbar.php');
                         </thead>
                         <tbody>
                             <?php
-                            $fetch_query = "SELECT * FROM supplier";
+                            $fetch_query = "SELECT * FROM product";
                             $fetch_query_run = mysqli_query($con, $fetch_query);
 
                             if (mysqli_num_rows($fetch_query_run) > 0) {
                                 while ($row = mysqli_fetch_array($fetch_query_run)) {
                             ?>
                                     <tr>
-                                        <td class="user_id"><?php echo $row['id']; ?></td>
-                                        <td><?php echo $row['name']; ?></td>
-                                        <td><?php echo $row['email']; ?></td>
-                                        <td><?php echo $row['phone']; ?></td>
-                                        <td><?php echo $row['address']; ?></td>
+                                        <td class="user_id"><?php echo $row['product_id']; ?></td>
+                                        <td><?php echo $row['product_name']; ?></td>
+                                        <td><?php echo $row['product_des']; ?></td>
+                                        <td><?php echo $row['categories_id']; ?></td>
+                                        <td><?php echo $row['sellPrice']; ?></td>
                                         <td>
                                             <a href="#" class="btn btn-primary btn-sm view_data">View</a>
                                         </td>
@@ -365,7 +372,7 @@ include('includes/footer.php');
 
             $.ajax({
                 method: "POST",
-                url: "supplier.php",
+                url: "product.php",
                 data: {
                     'click_view_btn': true,
                     'user_id': user_id,

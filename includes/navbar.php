@@ -30,10 +30,12 @@
 
 <hr class="sidebar-divider my-0">
 
+
+
 <li class="nav-item">
-  <a class="nav-link" href="index.php">
+  <a class="nav-link" href="product.php">
     <i class="fas fa-fw fa-chart-area"></i>
-    <span>Suppliers</span></a>
+    <span>Products</span></a>
 </li>
 
 <hr class="sidebar-divider my-0">
@@ -41,7 +43,16 @@
 <li class="nav-item">
   <a class="nav-link" href="index.php">
     <i class="fas fa-fw fa-chart-area"></i>
-    <span>Suppliers</span></a>
+    <span>Inventory</span></a>
+    
+</li>
+
+<hr class="sidebar-divider my-0">
+
+<li class="nav-item">
+  <a class="nav-link" href="sales.php">
+    <i class="fas fa-fw fa-chart-area"></i>
+    <span>Sales</span></a>
     
 </li>
 
@@ -51,19 +62,19 @@
 
 
 <!-- Nav Item - Pages Collapse Menu -->
-<!-- <li class="nav-item">
+<li class="nav-item">
   <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
     <i class="fas fa-fw fa-cog"></i>
-    <span>Components</span>
+    <span>ADMIN</span>
   </a>
   <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
     <div class="bg-white py-2 collapse-inner rounded">
-      <h6 class="collapse-header">Custom Components:</h6>
-      <a class="collapse-item" href="buttons.html">Buttons</a>
-      <a class="collapse-item" href="cards.html">Cards</a>
+      <h6 class="collapse-header">Admin Controls:</h6>
+      <a class="collapse-item" href="category.php">Product Category</a>
+      <a class="collapse-item" href="users.php">Manage Users</a>
     </div>
   </div>
-</li> -->
+</li>
 
 
 
