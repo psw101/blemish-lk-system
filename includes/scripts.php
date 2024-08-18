@@ -21,10 +21,12 @@
   <script>
           document.addEventListener('DOMContentLoaded', function() {
               var timeoutDuration = 60 * 60 * 1000; // 1 hour
-              var warningTime = 55 * 60 * 1000; // 5 minutes
+              var warningTime = 55 * 60 * 1000; // 55 minutes
 
               var sessionTimeout = setTimeout(function() {
                   // Show the Bootstrap modal
+                  // The modal has the ID 'sessionTimeoutModal'
+                  // timeout is set to 5 minutes before the session ends
                   var myModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'), {
                       backdrop: 'static',
                       keyboard: false
