@@ -1,47 +1,51 @@
--- Insert sample data into the Users Table
-INSERT INTO users (username, password, role) VALUES 
-('admin', SHA2('admin_password', 256), 'admin'),
-('user1', SHA2('user1_password', 256), 'user'),
-('user2', SHA2('user2_password', 256), 'user');
+USE blemish_inventory;
 
--- Insert sample data into the Permissions Table
-INSERT INTO permissions (user_id, permission_name) VALUES 
-(1, 'view_inventory'),
-(1, 'edit_inventory'),
-(2, 'view_inventory'),
-(3, 'view_inventory');
+-- Insert data into the users table
+INSERT INTO users (username, password, role) VALUES
+('admin_user', SHA2('admin_password', 256), 'admin'),
+('regular_user', SHA2('user_password', 256), 'user');
 
--- Insert sample data into the Supplier Table
-INSERT INTO supplier (name, email, phone, address) VALUES 
-('Supplier A', 'supplierA@example.com', '1234567890', '123 Elm St, Springfield'),
-('Supplier B', 'supplierB@example.com', '0987654321', '456 Oak St, Shelbyville'),
-('Supplier C', 'supplierC@example.com', '5555555555', '789 Maple St, Capital City');
+-- Insert data into the permissions table
+INSERT INTO permissions (user_id, permission_name) VALUES
+(1, 'manage_users'),
+(1, 'view_reports'),
+(2, 'view_inventory');
 
--- Insert sample data into the Categories Table
-INSERT INTO categories (categories_name) VALUES 
+-- Insert data into the supplier table
+INSERT INTO supplier (name, email, phone, address) VALUES
+('Supplier One', 'supplier1@example.com', '1234567890', '123 Main St, City'),
+('Supplier Two', 'supplier2@example.com', '0987654321', '456 Elm St, City');
+
+-- Insert data into the categories table
+INSERT INTO categories (categories_name) VALUES
 ('Electronics'),
-('Furniture'),
-('Clothing');
+('Clothing'),
+('Books');
 
--- Insert sample data into the Products Table
-INSERT INTO products (product_name, category_id, supplier_id, price, quantity_in_stock, size, color, description) VALUES 
-('Laptop', 1, 1, 999.99, 50, '15 inch', 'Silver', 'High-performance laptop'),
-('Office Chair', 2, 2, 199.99, 200, 'Standard', 'Black', 'Ergonomic office chair'),
-('T-shirt', 3, 3, 19.99, 500, 'Large', 'Blue', 'Cotton T-shirt');
+-- Insert data into the product table
+INSERT INTO product (product_name, product_des, categories_id, sellPrice) VALUES
+('Laptop', 'High-end gaming laptop', 1, '1500.00'),
+('T-shirt', 'Cotton T-shirt', 2, '20.00'),
+('Novel', 'Best-selling fiction novel', 3, '15.00');
 
--- Insert sample data into the Orders Table
-INSERT INTO orders (order_date, total_amount) VALUES 
-('2024-08-01', 1199.98),
-('2024-08-10', 399.98);
+-- Insert data into the products table
+INSERT INTO products (product_name, category_id, supplier_id, price, quantity_in_stock, size, color, description) VALUES
+('Gaming Laptop', 1, 1, 1500.00, 10, '15 inch', 'Black', 'High-end gaming laptop with latest specs'),
+('Casual T-shirt', 2, 2, 20.00, 50, 'L', 'Blue', 'Comfortable cotton T-shirt'),
+('Mystery Novel', 3, 1, 15.00, 100, NULL, NULL, 'Best-selling mystery novel by a popular author');
 
--- Insert sample data into the Order Items Table
-INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES 
-(1, 1, 1, 999.99, 999.99),
-(1, 2, 1, 199.99, 199.99),
-(2, 2, 2, 199.99, 399.98);
+-- Insert data into the orders table
+INSERT INTO orders (order_date, total_amount, supplier_id) VALUES
+('2024-08-01', 450.00, 1),
+('2024-08-02', 1000.00, 2);
 
--- Insert sample data into the Inventory Table
-INSERT INTO inventory (product_id, quantity, remarks) VALUES 
-(1, 50, 'Initial stock'),
-(2, 200, 'Initial stock'),
-(3, 500, 'Initial stock');
+-- Insert data into the order_items table
+INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES
+(1, 1, 2, 1500.00, 3000.00),
+(2, 3, 20, 15.00, 300.00);
+
+-- Insert data into the inventory table
+INSERT INTO inventory (product_id, quantity, remarks) VALUES
+(1, 20, 'Initial stock'),
+(2, 100, 'Initial stock'),
+(3, 200, 'Initial stock');
