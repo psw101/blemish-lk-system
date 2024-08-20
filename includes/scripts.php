@@ -9,24 +9,44 @@
   <script src="js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
-  <script src="vendor/chart.js/Chart.min.js"></script>
+<!--   <script src="vendor/chart.js/Chart.min.js"></script> -->
 
   <!-- Page level custom scripts -->
-  <script src="js/demo/chart-area-demo.js"></script>
-  <script src="js/demo/chart-pie-demo.js"></script>
-<!-- 
+<!--   <script src="js/demo/chart-area-demo.js"></script>
+  <script src="js/demo/chart-pie-demo.js"></script> -->
+  <!-- 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>  -->
 
   <script>
-          document.addEventListener('DOMContentLoaded', function() {
-              var timeoutDuration = 60 * 60 * 1000; // 1 hour
-              var warningTime = 55 * 60 * 1000; // 55 minutes
+      document.addEventListener('DOMContentLoaded', function() {
+          var timeoutDuration = 60 * 60 * 1000; // 1 hour
+          var warningTime = 55 * 60 * 1000; // 55 minutes
 
-              var sessionTimeout = setTimeout(function() {
-                  // Show the Bootstrap modal
-                  // The modal has the ID 'sessionTimeoutModal'
-                  // timeout is set to 5 minutes before the session ends
+          var sessionTimeout = setTimeout(function() {
+              // Show the Bootstrap modal
+              // The modal has the ID 'sessionTimeoutModal'
+              // timeout is set to 5 minutes before the session ends
+              var myModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'), {
+                  backdrop: 'static',
+                  keyboard: false
+              });
+              myModal.show();
+          }, timeoutDuration - warningTime);
+
+          var sessionEnd = setTimeout(function() {
+              window.location.href = 'logout.php'; // Redirect to logout page
+          }, timeoutDuration);
+
+          // Optional: Reset timers on user activity
+          document.addEventListener('mousemove', resetTimers);
+          document.addEventListener('keypress', resetTimers);
+
+          function resetTimers() {
+              clearTimeout(sessionTimeout);
+              clearTimeout(sessionEnd);
+
+              sessionTimeout = setTimeout(function() {
                   var myModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'), {
                       backdrop: 'static',
                       keyboard: false
@@ -34,31 +54,11 @@
                   myModal.show();
               }, timeoutDuration - warningTime);
 
-              var sessionEnd = setTimeout(function() {
+              sessionEnd = setTimeout(function() {
                   window.location.href = 'logout.php'; // Redirect to logout page
               }, timeoutDuration);
-
-              // Optional: Reset timers on user activity
-              document.addEventListener('mousemove', resetTimers);
-              document.addEventListener('keypress', resetTimers);
-
-              function resetTimers() {
-                  clearTimeout(sessionTimeout);
-                  clearTimeout(sessionEnd);
-
-                  sessionTimeout = setTimeout(function() {
-                      var myModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'), {
-                          backdrop: 'static',
-                          keyboard: false
-                      });
-                      myModal.show();
-                  }, timeoutDuration - warningTime);
-
-                  sessionEnd = setTimeout(function() {
-                      window.location.href = 'logout.php'; // Redirect to logout page
-                  }, timeoutDuration);
-              }
-          });
+          }
+      });
   </script>
 
   <?php
