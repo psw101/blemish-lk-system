@@ -1,6 +1,75 @@
 <?php
+session_start();
 include_once('./dbcon.php');
 include_once('./popup-util.php');
+// view order
+if (isset($_POST['view_order'])) {
+    $order_id = $_POST['id'];
+
+    // Prepared statement to prevent SQL injection
+    $query = $con->prepare("SELECT * FROM orders WHERE order_id = ?");
+    $query->bind_param("i", $order_id);
+    $query->execute();
+    $result = $query->get_result();
+
+    if ($result->num_rows == 0) {
+        echo "Order not found.";
+        exit;
+    } else {
+        $order_data = $result->fetch_assoc();
+
+        $query_for_find_products = $con->prepare("SELECT * FROM order_items WHERE order_id = ?");
+        $query_for_find_products->bind_param("i", $order_id);
+        $query_for_find_products->execute();
+        $order_items = $query_for_find_products->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $supplier_query = $con->prepare("SELECT name FROM supplier WHERE id = ?");
+        $supplier_query->bind_param("i", $order_data['supplier_id']);
+        $supplier_query->execute();
+        $supplier_name = $supplier_query->get_result()->fetch_assoc()['name'];
+
+        $output = '<p><b>Order ID: </b>' . $order_data['order_id'] . '</p>'
+            . '<p><b>Order Date: </b>' . $order_data['order_date'] . '</p>'
+            . '<p><b>Total Amount: </b>' . $order_data['total_amount'] . '</p>'
+            . '<p><b>Supplier: </b>' . $supplier_name . '</p>'
+            . '<p><b>Order Items: </b></p>';
+
+        $output .= '<div style="padding-left: 2%;">';
+
+        // Query to get items for a specific order_id
+        $query_for_find_item = "SELECT product_id, quantity, price FROM order_items WHERE order_id = ?";
+        $stmt = $con->prepare($query_for_find_item);
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
+        $query_run = $stmt->get_result();
+
+        if ($query_run->num_rows > 0) {
+            while ($row = $query_run->fetch_assoc()) {
+                // Query to get product name
+                $product_query = "SELECT product_name FROM products WHERE product_id = ?";
+                $product_stmt = $con->prepare($product_query);
+                $product_stmt->bind_param("i", $row['product_id']);
+                $product_stmt->execute();
+                $product_result = $product_stmt->get_result();
+                $product_name = $product_result->fetch_assoc()['product_name'];
+
+                $output .= '<p">' .
+                    htmlspecialchars($product_name) . ' - ' .
+                    'Quantity: ' . htmlspecialchars($row['quantity']) . ', ' .
+                    'Price: $' . number_format($row['price'], 2) .
+                    '</p>';
+            }
+        } else {
+            $output .= 'No Record Found';
+        }
+
+        $output .= '</div>';
+
+        echo $output;
+    }
+    exit;
+}
+
 
 //delete order
 if (isset($_POST['delete_order'])) {
@@ -50,12 +119,11 @@ if (isset($_POST['add'])) {
         $query = "INSERT INTO orders (order_date, total_amount, supplier_id) VALUES ('$order_date', '$total_amount', '$supplier_id')";
         $query_run = mysqli_query($con, $query);
         if ($query_run) {
-            display_alert("Order is added successfully");
+            $_SESSION['status'] = "Data inserted successfully!";
         } else {
-            display_alert("Order is not added");
+            $_SESSION['status'] = "Insertion of data failed!";
         }
     }
-    sleep(3);
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -82,12 +150,11 @@ if (isset($_POST['add_order_item'])) {
         $query = "INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES ('$order_id', '$product_id', '$quantity', '$price', '$total_price')";
         $query_run = mysqli_query($con, $query);
         if ($query_run) {
-            display_alert("Order item is added successfully");
+            $_SESSION['status_2'] = "Data inserted successfully!";
         } else {
-            display_alert("Order item is not added");
+            $_SESSION['status_2'] = "Insertion of data failed!";
         }
     }
-    sleep(3);
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -168,6 +235,22 @@ include('includes/navbar.php');
 <div class="container-fluid  mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
+            <?php
+            if (isset($_SESSION['status']) && $_SESSION['status'] != '') {
+
+            ?>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Alert - </strong> <?php echo $_SESSION['status']; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+            <?php
+                unset($_SESSION['status']);
+            }
+            ?>
             <!-- show orders table -->
             <div class="card">
                 <div class="card-header">
@@ -196,15 +279,16 @@ include('includes/navbar.php');
                                 while ($row = mysqli_fetch_assoc($query_run)) {
                             ?>
                                     <tr>
-                                        <td><?php echo $row['order_id']; ?></td>
+                                        <td class="order_id_cls"><?php echo $row['order_id']; ?></td>
                                         <td><?php echo $row['order_date']; ?></td>
                                         <td><?php echo $row['total_amount']; ?></td>
                                         <td><?php
                                             $query_for_supplier = "SELECT name FROM supplier WHERE id = " . $row['supplier_id'];
                                             echo mysqli_fetch_assoc(mysqli_query($con, $query_for_supplier))['name'];
                                             ?></td>
-                                        <td>
+                                        <td style="white-space: nowrap;">
                                             <button type="button" class="btn btn-success editbtn">Edit</button>
+                                            <button type="button" class="btn btn-primary viewbtn" data-toggle="modal" data-target="#viewOrderModal">View</button>
                                             <button type="button" class="btn btn-danger deletebtn">Delete</button>
                                         </td>
                                     </tr>
@@ -226,6 +310,22 @@ include('includes/navbar.php');
 <div class="container-fluid mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
+            <?php
+            if (isset($_SESSION['status_2']) && $_SESSION['status_2'] != '') {
+
+            ?>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Alert :</strong> <?php echo $_SESSION['status_2']; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+            <?php
+                unset($_SESSION['status_2']);
+            }
+            ?>
             <div class="card">
                 <div class="card-header">
                     <h4 class="text-dark font-weight-bold">Order Items</h4>
@@ -261,9 +361,10 @@ include('includes/navbar.php');
                                         <td><?php echo $row['quantity']; ?></td>
                                         <td><?php echo $row['price']; ?></td>
                                         <td><?php echo $row['total_price']; ?></td>
-                                        <td>
-                                            <button type="button" class="btn btn-success editbtn">Edit</button>
-                                            <button type="button" class="btn btn-danger deletebtn">Delete</button>
+                                        <td style="white-space: nowrap;">
+                                            <button type="button" class="btn btn-success editbtn_2">Edit</button>
+                                            <button type="button" class="btn btn-primary viewbtn_2">View</button>
+                                            <button type="button" class="btn btn-danger deletebtn_2">Delete</button>
                                         </td>
                                     </tr>
                             <?php
@@ -363,10 +464,27 @@ include('includes/navbar.php');
 <!-- Add Order Item Modal End -->
 
 
+<!-- view order modal -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1" role="dialog" aria-labelledby="viewuserLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewuserLabel">View Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="view_order_data">
 
-
-
-
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 include('includes/scripts.php');
@@ -375,5 +493,27 @@ include('includes/footer.php');
 
 
 <script>
+    $(document).ready(function() {
+        $('.viewbtn').click(function(e) {
+            e.preventDefault();
 
+            var id = $(this).closest('tr').find('.order_id_cls').text();
+            console.log(id);
+
+            $.ajax({
+                method: "POST",
+                url: "orders.php",
+                data: {
+                    'view_order': true,
+                    'id': id,
+                },
+                success: function(response) {
+                    $('.view_order_data').html(response);
+                    $('#viewOrderModal').modal('show');
+                }
+
+            });
+
+        });
+    });
 </script>
