@@ -398,12 +398,12 @@ include('includes/footer.php');
             e.preventDefault();
 
 
-            var user_id = $(this).closest('tr').find('.user_id').text();
-            // console.log(user_id);
+            var user_id = $(this).closest('tr').find('.user_id').val();
+            console.log(user_id);
 
             $.ajax({
                 method: "POST",
-                url: "supplier.php",
+                url: "product.php",
                 data: {
                     'click_edit_btn': true,
                     'user_id': user_id,
