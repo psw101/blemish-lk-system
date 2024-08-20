@@ -152,7 +152,7 @@ include('includes/navbar.php');
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="viewuserLabel">View Category Details</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -160,7 +160,7 @@ include('includes/navbar.php');
                 <div class="view_user_data"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -173,7 +173,7 @@ include('includes/navbar.php');
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editdataLabel">Edit Category Details</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -190,7 +190,7 @@ include('includes/navbar.php');
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     <button type="submit" name="update_data" class="btn btn-primary">Update Data</button>
                 </div>
             </form>
