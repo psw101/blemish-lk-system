@@ -249,12 +249,91 @@ if (isset($_POST['update_order'])) {
         mysqli_stmt_close($stmt);
     } else {
         $_SESSION['status'] = "Query preparation failed";
-        
     }
 
     header('Location: orders.php');
     exit();
 }
+
+
+
+// Check if the request is for editing order item
+if (isset($_POST['edit_order_item'])) {
+    $order_item_id = $_POST['order_item_id'];
+    $response = [];
+
+    // Prepare the SQL query to fetch order item details
+    $fetch_query = "SELECT * FROM order_items WHERE order_item_id = ?";
+    $stmt = mysqli_prepare($con, $fetch_query);
+
+    if ($stmt) {
+        // Bind parameter and execute statement
+        mysqli_stmt_bind_param($stmt, "i", $order_item_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        // Check if the result has rows
+        if (mysqli_num_rows($result) > 0) {
+            // Fetch data and prepare the response
+            $data = mysqli_fetch_assoc($result);
+            $response = ['status' => 'success', 'data' => $data];
+        } else {
+            $response = ['status' => 'error', 'message' => 'No record found'];
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
+    } else {
+        $response = ['status' => 'error', 'message' => 'Query preparation failed'];
+    }
+
+    // Set content type and output the response as JSON
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit;
+}
+
+
+
+// Update order item - data from edit order item modal
+if (isset($_POST['update_order_item'])) {
+    $order_item_id = $_POST['order_item_id'];
+    $order_id = $_POST['order_id'];
+    $product_id = $_POST['product_id'];
+    $quantity = $_POST['quantity'];
+    $price = $_POST['price'];
+    $total_price = $_POST['total_price'];
+
+    // Prepare the SQL update query
+    $update_query = "UPDATE order_items 
+                     SET order_id = ?, product_id = ?, quantity = ?, price = ?, total_price = ? 
+                     WHERE order_item_id = ?";
+
+    // Initialize prepared statement
+    $stmt = mysqli_prepare($con, $update_query);
+
+    if ($stmt) {
+        // Bind parameters to the prepared statement
+        // 'i' for integer, 'd' for decimal
+        mysqli_stmt_bind_param($stmt, "iiiddi", $order_id, $product_id, $quantity, $price, $total_price, $order_item_id);
+
+        // Execute the prepared statement
+        if (mysqli_stmt_execute($stmt)) {
+            $_SESSION['success'] = "Order item updated successfully";
+        } else {
+            $_SESSION['status'] = "Order item update failed";
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
+    } else {
+        $_SESSION['status'] = "Query preparation failed";
+    }
+
+    header('Location: orders.php');
+    exit();
+}
+
 
 
 
@@ -631,6 +710,58 @@ include('includes/navbar.php');
 </div>
 <!-- Edit Order Modal End -->
 
+<!-- Edit Order Item Modal Start -->
+<div class="modal fade" id="editOrderItemModal" tabindex="-1" role="dialog" aria-labelledby="editOrderItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editOrderItemModalLabel">Edit Order Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <div class="modal-body">
+                    <!-- Hidden field to store the Order Item ID -->
+                    <input type="hidden" class="form-control" id="order_item_id" name="order_item_id">
+
+                    <div class="form-group mb-3">
+                        <label for="order_id">Order ID</label>
+                        <input type="number" class="form-control" id="order_id_2" name="order_id" placeholder="Enter Order ID" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="product_id">Product ID</label>
+                        <input type="number" class="form-control" id="product_id" name="product_id" placeholder="Enter Product ID" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="price">Price</label>
+                        <input type="number" step="0.01" class="form-control" id="price" name="price" placeholder="Enter Price" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="total_price">Total Price</label>
+                        <input type="number" step="0.01" class="form-control" id="total_price" name="total_price" placeholder="Enter Total Price" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="update_order_item" class="btn btn-primary">Update Order Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Edit Order Item Modal End -->
+
 
 <?php
 include('includes/scripts.php');
@@ -698,7 +829,7 @@ include('includes/footer.php');
             // Make an AJAX request to fetch order details
             $.ajax({
                 method: "POST",
-                url: "orders.php", // Adjust the URL to your backend script
+                url: "orders.php",
                 data: {
                     'edit_order': true,
                     'order_id': order_id,
@@ -714,6 +845,45 @@ include('includes/footer.php');
 
                     // Show the modal with order data populated
                     $('#editOrderModal').modal('show');
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function() {
+        $('.editbtn_2').click(function(e) {
+            e.preventDefault();
+
+            // Retrieve the order_item_id from the clicked row
+            var order_item_id = $(this).closest('tr').find('.order_item_id_cls').text();
+
+            // Make an AJAX request to fetch order item details
+            $.ajax({
+                method: "POST",
+                url: "orders.php", // Adjust the URL to your backend script
+                data: {
+                    'edit_order_item': true,
+                    'order_item_id': order_item_id
+                },
+                dataType: "json",
+                success: function(response) {
+                    
+                    $.each(response, function(key, value) {
+                        // Populate modal fields with fetched data
+                        $('#order_item_id').val(value['order_item_id']);
+                        $('#order_id_2').val(value['order_id']);
+                        $('#product_id').val(value['product_id']);
+                        $('#quantity').val(value['quantity']);
+                        $('#price').val(value['price']);
+                        $('#total_price').val(value['total_price']);
+                    });
+
+                    $('#editOrderItemModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    console.error('Response Text:', xhr.responseText); // Log the actual response text
                 }
             });
         });
