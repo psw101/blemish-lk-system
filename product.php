@@ -2,7 +2,7 @@
 session_start();
 require('dbcon.php');
 
-/* --------------------------------------------------------------------------------code.php file start-------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------------code.php file start------------------------------------------------------------------------------------- */
 
 // Insert data start
 if (isset($_POST['save_supp_data'])) {
@@ -16,7 +16,7 @@ if (isset($_POST['save_supp_data'])) {
     $insert_query_run = mysqli_query($con, $insert_query);
 
     if ($insert_query_run) {
-        $_SESSION['status'] = "Data inserted successfully!";
+        $_SESSION['status'] = "Data inserted successfully !";
     } else {
         $_SESSION['status'] = "Insertion of data failed!";
     }
@@ -78,22 +78,22 @@ if (isset($_POST['click_edit_btn'])) {
 
 //update data start
 if (isset($_POST['update_data'])) {
-    $id = $_POST['id'];
+    $id = $_POST['product_id'];
     $name = $_POST['name'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $address = $_POST['address'];
 
-    $update_query = "UPDATE supplier SET name='$name', email='$email', phone='$phone', address='$address' WHERE id='$id'";
+    $update_query = "UPDATE product SET product_name='$name', product_des='$email', categories_id='$phone', sellPrice='$address' WHERE product_id='$id'";
     $update_query_run = mysqli_query($con, $update_query);
 
     if ($update_query_run) {
         $_SESSION['status'] = "Data updated successfully !";
-        header('Location: supplier.php');
+        header('Location: product.php');
         exit;
     } else {
         $_SESSION['status'] = "Data updation failed !";
-        header('Location: supplier.php');
+        header('Location: product.php');
         exit;
     }
 }
@@ -441,7 +441,7 @@ include('includes/footer.php');
 
             $.ajax({
                 method: "POST",
-                url: "supplier.php",
+                url: "product.php",
                 data: {
                     'click_delete_btn': true,
                     'user_id': user_id,
