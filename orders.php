@@ -194,22 +194,69 @@ if (isset($_POST['add_order_item'])) {
 }
 
 
-//update order
+//edit order
+if (isset($_POST['edit_order'])) {
+    $order_id = $_POST['order_id'];
+    $arrayResult = [];
+
+    // Fetch order details from the database
+    $fetch_query = "SELECT * FROM orders WHERE order_id = '$order_id'";
+    $fetch_query_run = mysqli_query($con, $fetch_query);
+
+    if (mysqli_num_rows($fetch_query_run) > 0) {
+        while ($row = mysqli_fetch_assoc($fetch_query_run)) {
+            // Push the fetched order details into the result array
+            array_push($arrayResult, $row);
+        }
+        // Send the response as a JSON object
+        header('Content-Type: application/json');
+        echo json_encode($arrayResult);
+        exit;
+    } else {
+        // No record found case
+        echo json_encode(['status' => 'No record found']);
+    }
+}
+
+//update order - data from edit order modal
 if (isset($_POST['update_order'])) {
     $order_id = $_POST['order_id'];
     $order_date = $_POST['order_date'];
     $total_amount = $_POST['total_amount'];
-    $status = $_POST['status'];
-    $query = "UPDATE orders SET order_date = '$order_date', total_amount = '$total_amount', status = '$status' WHERE order_id = $order_id";
-    $query_run = mysqli_query($con, $query);
-    if ($query_run) {
-        $_SESSION['success'] = "Order is updated successfully";
-        header('Location: orders.php');
+    $supplier_id = $_POST['supplier_id'];
+
+    // Prepare the SQL update query
+    $update_query = "UPDATE orders 
+                     SET order_date = ?, total_amount = ?, supplier_id = ? 
+                     WHERE order_id = ?";
+
+    // Initialize prepared statement
+    $stmt = mysqli_prepare($con, $update_query);
+
+    if ($stmt) {
+        // Bind parameters to the prepared statement
+        // 's' for string, 'd' for decimal, 'i' for integer
+        mysqli_stmt_bind_param($stmt, "sdii", $order_date, $total_amount, $supplier_id, $order_id);
+
+        // Execute the prepared statement
+        if (mysqli_stmt_execute($stmt)) {
+            $_SESSION['success'] = "Order updated successfully";
+        } else {
+            $_SESSION['status'] = "Order update failed";
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
     } else {
-        $_SESSION['status'] = "Order is not updated";
-        header('Location: orders.php');
+        $_SESSION['status'] = "Query preparation failed";
+        
     }
+
+    header('Location: orders.php');
+    exit();
 }
+
+
 
 //update order item
 if (isset($_POST['update_order_item'])) {
@@ -542,6 +589,49 @@ include('includes/navbar.php');
     </div>
 </div>
 
+<!-- Edit Order Modal Start -->
+<div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editOrderModalLabel">Edit Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <div class="modal-body">
+                    <!-- Hidden field to store the Order ID -->
+                    <input type="hidden" class="form-control" id="order_id" name="order_id">
+
+                    <div class="form-group mb-3">
+                        <label for="order_date">Order Date</label>
+                        <input type="date" class="form-control" id="order_date" name="order_date" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="total_amount">Total Amount</label>
+                        <input type="number" step="0.01" class="form-control" id="total_amount" name="total_amount" placeholder="Enter Total Amount" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="supplier_id">Supplier Id</label>
+                        <input type="number" class="form-control" id="supplier_id" name="supplier_id" placeholder="Enter Supplier ID" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="update_order" class="btn btn-primary">Update Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Edit Order Modal End -->
+
+
 <?php
 include('includes/scripts.php');
 include('includes/footer.php');
@@ -597,6 +687,35 @@ include('includes/footer.php');
 
     });
 
+    $(document).ready(function() {
+        $('.editbtn').click(function(e) {
+            e.preventDefault();
 
-    
+            // Retrieve the order_id from the clicked row
+            var order_id = $(this).closest('tr').find('.order_id_cls').text();
+            console.log(order_id);
+
+            // Make an AJAX request to fetch order details
+            $.ajax({
+                method: "POST",
+                url: "orders.php", // Adjust the URL to your backend script
+                data: {
+                    'edit_order': true,
+                    'order_id': order_id,
+                },
+                success: function(response) {
+                    // Assuming the response is a JSON object with order details
+                    $.each(response, function(key, value) {
+                        $('#order_id').val(value['order_id']);
+                        $('#order_date').val(value['order_date']);
+                        $('#total_amount').val(value['total_amount']);
+                        $('#supplier_id').val(value['supplier_id']);
+                    });
+
+                    // Show the modal with order data populated
+                    $('#editOrderModal').modal('show');
+                }
+            });
+        });
+    });
 </script>
