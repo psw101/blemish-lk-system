@@ -105,21 +105,6 @@ if (isset($_POST['view_order_item'])) {
 }
 
 
-//delete order
-if (isset($_POST['delete_order'])) {
-    $order_id = $_POST['delete_id'];
-    $query = "DELETE FROM orders WHERE order_id = $order_id";
-    $query_run = mysqli_query($con, $query);
-    if ($query_run) {
-        display_alert("Order is deleted successfully");
-    } else {
-        display_alert("Order is not deleted");
-    }
-    sleep(3);
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;
-}
-
 //delete order item
 // Check if the request is to delete an order item
 if (isset($_POST['delete_order_item'])) {
@@ -134,6 +119,7 @@ if (isset($_POST['delete_order_item'])) {
         // Bind parameter and execute statement
         mysqli_stmt_bind_param($stmt, "i", $order_item_id);
         $success = mysqli_stmt_execute($stmt);
+        error_log('Debug message: Reached this point in the script');
 
         if ($success) {
             $response = ['status' => 'success', 'message' => 'Order item deleted successfully'];
@@ -152,6 +138,49 @@ if (isset($_POST['delete_order_item'])) {
     echo json_encode($response);
     exit;
 }
+
+
+// delete order
+// Check if the request is to delete an order
+// delete order
+if (isset($_POST['delete_order'])) {
+    $delete_order_id = $_POST['delete_order_id'];
+    $response_order = [];
+
+    // Sanitize input
+    $delete_order_id = intval($delete_order_id); // Ensure it's an integer
+
+    // Prepare the SQL query to delete the order
+    $delete_query = "DELETE FROM orders WHERE order_id = ?";
+    $stmt = mysqli_prepare($con, $delete_query);
+
+    if ($stmt) {
+        // Bind parameter and execute statement
+        mysqli_stmt_bind_param($stmt, "i", $delete_order_id);
+        $success = mysqli_stmt_execute($stmt);
+
+        if ($success) {
+            $response_order = ['status' => 'success', 'message' => 'Order deleted successfully'];
+        } else {
+            // Output MySQL error message for debugging
+            $response_order = ['status' => 'error', 'message' => 'Failed to delete order: ' . mysqli_error($con)];
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
+    } else {
+        // Output MySQL error message for debugging
+        $response_order = ['status' => 'error', 'message' => 'Query preparation failed: ' . mysqli_error($con)];
+    }
+
+    // Set content type and output the response as JSON
+    header('Content-Type: application/json');
+    echo json_encode($response_order);
+    exit;
+}
+
+
+
 
 //add order
 if (isset($_POST['add'])) {
@@ -533,7 +562,7 @@ include('includes/navbar.php');
                                 while ($row = mysqli_fetch_assoc($query_run)) {
                             ?>
                                     <tr>
-                                        <td class="order_item_id_cls"><?php echo $row['order_item_id']; ?></td>
+                                        <td class="order_item_id_cls"> <?php echo $row['order_item_id']; ?> </td>
                                         <td><?php echo $row['order_id']; ?></td>
                                         <td><?php echo $row['product_id']; ?></td>
                                         <td><?php echo $row['quantity']; ?></td>
@@ -780,6 +809,28 @@ include('includes/navbar.php');
 </div>
 <!-- Edit Order Item Modal End -->
 
+<!-- Delete Confirmation Modal Start(for order table)-->
+<div class="modal fade" id="deleteOrderModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteOrderModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this order?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal End -->
+
 <!-- Delete Confirmation Modal Start -->
 <div class="modal fade" id="deleteOrderItemModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderItemModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -801,6 +852,8 @@ include('includes/navbar.php');
     </div>
 </div>
 <!-- Delete Confirmation Modal End -->
+
+
 
 
 
@@ -967,6 +1020,51 @@ include('includes/footer.php');
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', status, error);
                     $('#deleteOrderItemModal').modal('hide');
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function() {
+        var orderId; // Variable to store the order item ID
+
+        // Show the confirmation modal and set the order item ID
+        $('.deletebtn').click(function(e) {
+            e.preventDefault();
+
+            // Retrieve the order_item_id from the clicked button
+            orderId = $(this).closest('tr').find('.order_id_cls').text();
+            console.log(orderId);
+
+            // Show the confirmation modal
+            $('#deleteOrderModal').modal('show');
+        });
+
+        // Handle the confirmation button click
+        $('#confirmDeleteBtn').click(function() {
+            // Make an AJAX request to delete the order item
+            $.ajax({
+                method: "POST",
+                url: "orders.php", // URL to your PHP script
+                data: {
+                    'delete_order': true,
+                    'delete_order_id': orderId,
+                },
+                success: function(response_order) {
+                    if (response_order.status === 'success') {
+                        // Hide the confirmation modal
+                        $('#deleteOrderModal').modal('hide');
+                        window.location.reload();
+                    }else{
+                        alert('Failed to delete order');
+                    }
+
+                },
+                dataType: "json",
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    $('#deleteOrderModal').modal('hide');
                 }
             });
         });
