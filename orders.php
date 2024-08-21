@@ -70,6 +70,40 @@ if (isset($_POST['view_order'])) {
     exit;
 }
 
+//view order-item details (function)
+if (isset($_POST['view_order_item'])) {
+    $order_item_id = $_POST['id'];
+
+    // Prepared statement to prevent SQL injection
+    $query = $con->prepare("SELECT * FROM order_items WHERE order_item_id = ?");
+    $query->bind_param("i", $order_item_id);
+    $query->execute();
+    $result = $query->get_result();
+
+    if ($result->num_rows == 0) {
+        echo "Order item not found.";
+        exit;
+    } else {
+        $product_name_query = $con->prepare("SELECT product_name FROM products WHERE product_id = ?");
+        $order_item_data = $result->fetch_assoc();
+        $product_id = $order_item_data['product_id'];
+        $product_name_query->bind_param("i", $product_id);
+        $product_name_query->execute();
+        $product_name = $product_name_query->get_result()->fetch_assoc()['product_name'];
+
+        $output = '<p><b>Order Item ID: </b>' . $order_item_data['order_item_id'] . '</p>'
+            . '<p><b>Order ID: </b>' . $order_item_data['order_id'] . '</p>'
+            . '<p><b>Product ID: </b>' . $order_item_data['product_id'] . '</p>'
+            . '<p><b>Product Name: </b>' . $product_name . '</p>'
+            . '<p><b>Quantity: </b>' . $order_item_data['quantity'] . '</p>'
+            . '<p><b>Price: </b>' . $order_item_data['price'] . '</p>'
+            . '<p><b>Total Price: </b>' . $order_item_data['total_price'] . '</p>';
+
+        echo $output;
+    }
+    exit;
+}
+
 
 //delete order
 if (isset($_POST['delete_order'])) {
@@ -355,7 +389,7 @@ include('includes/navbar.php');
                                 while ($row = mysqli_fetch_assoc($query_run)) {
                             ?>
                                     <tr>
-                                        <td><?php echo $row['order_item_id']; ?></td>
+                                        <td class="order_item_id_cls"><?php echo $row['order_item_id']; ?></td>
                                         <td><?php echo $row['order_id']; ?></td>
                                         <td><?php echo $row['product_id']; ?></td>
                                         <td><?php echo $row['quantity']; ?></td>
@@ -486,6 +520,28 @@ include('includes/navbar.php');
     </div>
 </div>
 
+<!-- view order-items model -->
+<div class="modal fade" id="viewOrderItemModal" tabindex="-1" role="dialog" aria-labelledby="viewuserLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewuserLabel">View Order Item Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="view_order_item_data">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 include('includes/scripts.php');
 include('includes/footer.php');
@@ -494,26 +550,53 @@ include('includes/footer.php');
 
 <script>
     $(document).ready(function() {
-        $('.viewbtn').click(function(e) {
-            e.preventDefault();
 
-            var id = $(this).closest('tr').find('.order_id_cls').text();
-            console.log(id);
+        function handleViewButtonClick(buttonClass, idClass, ajaxData, modalSelector, contentSelector) {
+            $(buttonClass).click(function(e) {
+                e.preventDefault();
 
-            $.ajax({
-                method: "POST",
-                url: "orders.php",
-                data: {
-                    'view_order': true,
-                    'id': id,
-                },
-                success: function(response) {
-                    $('.view_order_data').html(response);
-                    $('#viewOrderModal').modal('show');
+                var id = $(this).closest('tr').find(idClass).text();
+                console.log(id);
+
+                if (!id) {
+                    alert('ID not found');
+                    return;
                 }
 
+                $.ajax({
+                    method: "POST",
+                    url: "orders.php",
+                    data: ajaxData(id),
+                    success: function(response) {
+                        $(contentSelector).html(response);
+                        $(modalSelector).modal('show');
+                    }
+                });
             });
+        }
 
-        });
+        handleViewButtonClick('.viewbtn', '.order_id_cls',
+            function(id) {
+                return {
+                    'view_order': true,
+                    'id': id
+                };
+            },
+            '#viewOrderModal', '.view_order_data'
+        );
+
+        handleViewButtonClick('.viewbtn_2', '.order_item_id_cls',
+            function(id) {
+                return {
+                    'view_order_item': true,
+                    'id': id
+                };
+            },
+            '#viewOrderItemModal', '.view_order_item_data'
+        );
+
     });
+
+
+    
 </script>
