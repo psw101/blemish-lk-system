@@ -41,7 +41,7 @@ if (isset($_POST['click_view_btn'])) {
         // Here is an example of returning the data as HTML
         echo "<p>Name: " . $user_data['product_name'] . "</p>";
         echo "<p>Email: " . $user_data['product_des'] . "</p>";
-        echo "<p>Phone: " . $user_data['categories_id'] . "</p>";
+        echo "<p>Category ID: " . $user_data['categories_id'] . "</p>";
         echo "<p>Address: " . $user_data['sellPrice'] . "</p>";
     } else {
         echo "No data found for this user.";
