@@ -7,11 +7,9 @@ require('dbcon.php');
 // Insert data start
 if (isset($_POST['save_supp_data'])) {
     $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
+    
 
-    $insert_query = "INSERT INTO supplier(name,email,phone,address) VALUES ('$name', '$email', '$phone', '$address')";
+    $insert_query = "INSERT INTO users(name) VALUES ('$name')";
     $insert_query_run = mysqli_query($con, $insert_query);
 
     if ($insert_query_run) {
@@ -31,17 +29,14 @@ if (isset($_POST['click_view_btn'])) {
     $user_id = $_POST['user_id'];
 
     // Fetch user data based on $user_id from the database
-    $query = "SELECT * FROM supplier WHERE id = '$user_id'";
+    $query = "SELECT * FROM users WHERE user_id = '$user_id'";
     $query_run = mysqli_query($con, $query);
 
     if (mysqli_num_rows($query_run) > 0) {
         $user_data = mysqli_fetch_assoc($query_run);
         // Assuming you want to return the data in some format (e.g., HTML or JSON)
         // Here is an example of returning the data as HTML
-        echo "<p>Name: " . $user_data['name'] . "</p>";
-        echo "<p>Email: " . $user_data['email'] . "</p>";
-        echo "<p>Phone: " . $user_data['phone'] . "</p>";
-        echo "<p>Address: " . $user_data['address'] . "</p>";
+        echo "<p>Name: " . $user_data['username'] . "</p>";
     } else {
         echo "No data found for this user.";
     }
@@ -78,11 +73,8 @@ if (isset($_POST['click_edit_btn'])) {
 if (isset($_POST['update_data'])) {
     $id = $_POST['id'];
     $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
 
-    $update_query = "UPDATE supplier SET name='$name', email='$email', phone='$phone', address='$address' WHERE id='$id'";
+    $update_query = "UPDATE supplier SET name='$name' WHERE id='$id'";
     $update_query_run = mysqli_query($con, $update_query);
 
     if ($update_query_run) {
@@ -103,7 +95,7 @@ if (isset($_POST['update_data'])) {
 if (isset($_POST['click_delete_btn'])) {
     $id = $_POST['user_id'];
 
-    $delete_query = "DELETE FROM supplier WHERE id='$id'";
+    $delete_query = "DELETE FROM users WHERE user_id='$id'";
     $delete_query_run = mysqli_query($con, $delete_query);
 
     if ($delete_query_run) {
@@ -144,7 +136,7 @@ include('includes/navbar.php');
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="insertdataLabel">Add Suppliers</h5>
+                <h5 class="modal-title" id="insertdataLabel">Add User</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -153,24 +145,31 @@ include('includes/navbar.php');
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                 <div class="modal-body">
                     <div class="form-group mb-3">
-                        <label for="name">Supplier Name</label>
-                        <input type="text" class="form-control" name="name" placeholder="enter name">
+                        <label for="name">User Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="Enter name">
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">Supplier Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="enter email">
+                    <div class="form-group mb-3">
+                        <label for="role">Role</label>
+                        <select class="form-control" name="role">
+                            <option value="" disabled selected>Choose one</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="phone">Supplier Contact No</label>
-                        <input type="number" class="form-control" name="phone" placeholder="enter number">
+
+                    <div class="form-group mb-3">
+                        <label for="name">Enter Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Enter name">
                     </div>
 
-                    <div class="form-group">
-                        <label for="address">Supplier Address</label>
-                        <input type="text" class="form-control" name="address" placeholder="enter address">
+                    <div class="form-group mb-3">
+                        <label for="name">Re-enter Password</label>
+                        <input type="password" class="form-control" name="re-enterPassword" placeholder="Enter name">
                     </div>
+
+
 
                 </div>
                 <div class="modal-footer">
@@ -188,7 +187,7 @@ include('includes/navbar.php');
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewuserLabel">View Supplier Details</h5>
+                <h5 class="modal-title" id="viewuserLabel">View User Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -230,21 +229,6 @@ include('includes/navbar.php');
                     </div>
                     <!-- id use for jquery, name use for php -->
 
-                    <div class="form-group">
-                        <label for="email">Supplier Email</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="enter email">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">Supplier Contact No</label>
-                        <input type="text" class="form-control" id="phone" name="phone" placeholder="enter number">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="address">Supplier Address</label>
-                        <input type="text" class="form-control" id="address" name="address" placeholder="enter address">
-                    </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -283,7 +267,7 @@ include('includes/navbar.php');
                 <div class="card-header">
                     <h4 class="text-dark fw-bold">MANAGE USERS</h4>
                     <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
-                        Add Suppliers
+                        Add User
                     </button>
                 </div>
 
@@ -293,9 +277,6 @@ include('includes/navbar.php');
                             <tr>
                                 <th scope="col">ID</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Phone No</th>
-                                <th scope="col">Address</th>
                                 <th scope="col">View</th>
                                 <th scope="col">Edit</th>
                                 <th scope="col">Delete</th>
@@ -303,18 +284,15 @@ include('includes/navbar.php');
                         </thead>
                         <tbody>
                             <?php
-                            $fetch_query = "SELECT * FROM supplier";
+                            $fetch_query = "SELECT * FROM users";
                             $fetch_query_run = mysqli_query($con, $fetch_query);
 
                             if (mysqli_num_rows($fetch_query_run) > 0) {
                                 while ($row = mysqli_fetch_array($fetch_query_run)) {
                             ?>
                                     <tr>
-                                        <td class="user_id"><?php echo $row['id']; ?></td>
-                                        <td><?php echo $row['name']; ?></td>
-                                        <td><?php echo $row['email']; ?></td>
-                                        <td><?php echo $row['phone']; ?></td>
-                                        <td><?php echo $row['address']; ?></td>
+                                        <td class="user_id"><?php echo $row['user_id']; ?></td>
+                                        <td><?php echo $row['username']; ?></td>
                                         <td>
                                             <a href="#" class="btn btn-primary btn-sm view_data">View</a>
                                         </td>
@@ -365,7 +343,7 @@ include('includes/footer.php');
 
             $.ajax({
                 method: "POST",
-                url: "supplier.php",
+                url: "users.php",
                 data: {
                     'click_view_btn': true,
                     'user_id': user_id,
@@ -390,7 +368,6 @@ include('includes/footer.php');
         $('.edit_data').click(function(e) {
             e.preventDefault();
 
-
             var user_id = $(this).closest('tr').find('.user_id').text();
             // console.log(user_id);
 
@@ -408,9 +385,6 @@ include('includes/footer.php');
                         // console.log(value['name']);
                         $('#supplier_id').val(value['id']);
                         $('#name').val(value['name']);
-                        $('#email').val(value['email']);
-                        $('#phone').val(value['phone']);
-                        $('#address').val(value['address']);
                         //id,name,email,.. are database column names.    user_id,name,email,.. are form's field ids used in modal
 
                     });
@@ -431,7 +405,6 @@ include('includes/footer.php');
         $('.delete_btn').click(function(e) {
             e.preventDefault();
 
-
             var user_id = $(this).closest('tr').find('.user_id').text();
             // console.log(supplier_id);
 
@@ -451,9 +424,6 @@ include('includes/footer.php');
 
                 }
             });
-
-
-
         })
     });
     //Delete data end
