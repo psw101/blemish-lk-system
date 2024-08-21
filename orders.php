@@ -121,17 +121,35 @@ if (isset($_POST['delete_order'])) {
 }
 
 //delete order item
+// Check if the request is to delete an order item
 if (isset($_POST['delete_order_item'])) {
-    $order_item_id = $_POST['delete_id'];
-    $query = "DELETE FROM order_items WHERE order_item_id = $order_item_id";
-    $query_run = mysqli_query($con, $query);
-    if ($query_run) {
-        display_alert("Order item is deleted successfully");
+    $order_item_id = $_POST['order_item_id'];
+    $response = [];
+
+    // Prepare the SQL query to delete the order item
+    $delete_query = "DELETE FROM order_items WHERE order_item_id = ?";
+    $stmt = mysqli_prepare($con, $delete_query);
+
+    if ($stmt) {
+        // Bind parameter and execute statement
+        mysqli_stmt_bind_param($stmt, "i", $order_item_id);
+        $success = mysqli_stmt_execute($stmt);
+
+        if ($success) {
+            $response = ['status' => 'success', 'message' => 'Order item deleted successfully'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Failed to delete order item'];
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
     } else {
-        display_alert("Order item is not deleted");
+        $response = ['status' => 'error', 'message' => 'Query preparation failed'];
     }
-    sleep(3);
-    header('Location: ' . $_SERVER['PHP_SELF']);
+
+    // Set content type and output the response as JSON
+    header('Content-Type: application/json');
+    echo json_encode($response);
     exit;
 }
 
@@ -762,6 +780,29 @@ include('includes/navbar.php');
 </div>
 <!-- Edit Order Item Modal End -->
 
+<!-- Delete Confirmation Modal Start -->
+<div class="modal fade" id="deleteOrderItemModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrderItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteOrderItemModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this order item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn_2">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal End -->
+
+
 
 <?php
 include('includes/scripts.php');
@@ -868,7 +909,7 @@ include('includes/footer.php');
                 },
                 dataType: "json",
                 success: function(response) {
-                    
+
                     $.each(response, function(key, value) {
                         // Populate modal fields with fetched data
                         $('#order_item_id').val(value['order_item_id']);
@@ -884,6 +925,48 @@ include('includes/footer.php');
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', status, error);
                     console.error('Response Text:', xhr.responseText); // Log the actual response text
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        var orderItemId; // Variable to store the order item ID
+
+        // Show the confirmation modal and set the order item ID
+        $('.deletebtn_2').click(function(e) {
+            e.preventDefault();
+
+            // Retrieve the order_item_id from the clicked button
+            orderItemId = $(this).closest('tr').find('.order_item_id_cls').text();
+            console.log(orderItemId);
+
+            // Show the confirmation modal
+            $('#deleteOrderItemModal').modal('show');
+        });
+
+        // Handle the confirmation button click
+        $('#confirmDeleteBtn_2').click(function() {
+            // Make an AJAX request to delete the order item
+            $.ajax({
+                method: "POST",
+                url: "orders.php", // URL to your PHP script
+                data: {
+                    'delete_order_item': true,
+                    'order_item_id': orderItemId
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Hide the confirmation modal
+                        $('#deleteOrderItemModal').modal('hide');
+                        window.location.reload();
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    $('#deleteOrderItemModal').modal('hide');
                 }
             });
         });
