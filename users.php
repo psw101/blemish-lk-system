@@ -6,22 +6,40 @@ require('dbcon.php');
 
 // Insert data start
 if (isset($_POST['save_supp_data'])) {
-    $name = $_POST['name'];
-    
+    $username = $_POST['name'];
+    $pass = $_POST['pass'];
+    $confirmpass = $_POST['confirmpass'];
+    $role = $_POST['role'];
 
-    $insert_query = "INSERT INTO users(name) VALUES ('$name')";
-    $insert_query_run = mysqli_query($con, $insert_query);
-
-    if ($insert_query_run) {
-        $_SESSION['status'] = "Data inserted successfully!";
+    // Validate that password and confirm password match
+    if ($pass !== $confirmpass) {
+        $_SESSION['status'] = "Password and Confirm Password do not match!";
     } else {
-        $_SESSION['status'] = "Insertion of data failed!";
+        // Check if username is unique
+        $check_username_query = "SELECT * FROM users WHERE username='$username'";
+        $check_username_run = mysqli_query($con, $check_username_query);
+
+        if (mysqli_num_rows($check_username_run) > 0) {
+            $_SESSION['status'] = "Username already exists!";
+        } else {
+            // If both validations pass, insert the new user
+            $hashed_pass = hash('sha256', $pass); // Hash the password using SHA-256
+            $insert_query = "INSERT INTO users(username, password, role) VALUES ('$username', '$hashed_pass', '$role')";
+            $insert_query_run = mysqli_query($con, $insert_query);
+
+            if ($insert_query_run) {
+                $_SESSION['status'] = "Data inserted successfully!";
+            } else {
+                $_SESSION['status'] = "Insertion of data failed!";
+            }
+        }
     }
 
     // Redirect to avoid form resubmission
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
+
 // Insert data end
 
 // View data start
@@ -161,12 +179,12 @@ include('includes/navbar.php');
 
                     <div class="form-group mb-3">
                         <label for="name">Enter Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="Enter name">
+                        <input type="password" class="form-control" name="pass" placeholder="Password">
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="name">Re-enter Password</label>
-                        <input type="password" class="form-control" name="re-enterPassword" placeholder="Enter name">
+                        <input type="password" class="form-control" name="confirmpass" placeholder="Password">
                     </div>
 
 
@@ -373,7 +391,7 @@ include('includes/footer.php');
 
             $.ajax({
                 method: "POST",
-                url: "supplier.php",
+                url: "users.php",
                 data: {
                     'click_edit_btn': true,
                     'user_id': user_id,
