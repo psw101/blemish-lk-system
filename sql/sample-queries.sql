@@ -1,25 +1,18 @@
+USE blemish_inventory;
 
 SELECT * FROM users;
-
 SELECT * FROM permissions;
-
 SELECT * FROM supplier;
-
 SELECT * FROM categories;
-
 SELECT * FROM product;
-
 SELECT * FROM products;
-
 SELECT * FROM orders;
-
 SELECT * FROM order_items;
-
 SELECT * FROM inventory;
 
 -- Insert a new user
 INSERT INTO users (username, password, role)
-VALUES ('newuser2', SHA2('user3-password', 256), 'user');
+VALUES ('newuser5', SHA2('user3-password', 256), 'user');
 
 -- Select a user by username
 SELECT * FROM users
@@ -106,3 +99,8 @@ ORDER BY total_sold DESC;
 SELECT product_name, quantity_in_stock
 FROM products
 WHERE quantity_in_stock < 10;
+
+-- check the validity of order id
+SELECT COUNT(*) AS order_count
+FROM orders
+WHERE order_id = 1;
