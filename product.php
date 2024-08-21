@@ -56,20 +56,21 @@ if (isset($_POST['click_edit_btn'])) {
     $id = $_POST['user_id'];
     $arrayresult = [];
 
-    // echo $id;
-    $fetch_query = "SELECT * FROM supplier WHERE id='$id'";
-    $fetch_query_run = mysqli_query($con, $fetch_query);
+    // Fetch user data based on $user_id from the database
+    $query = "SELECT * FROM product WHERE product_id = '$id'";
+    $query_run = mysqli_query($con, $query);
 
-    if (mysqli_num_rows($fetch_query_run) > 0) {
-        while ($row = mysqli_fetch_array($fetch_query_run)) {
+    if (mysqli_num_rows($query_run) > 0) {
+        while ($row = mysqli_fetch_array($query_run)) {
             array_push($arrayresult, $row);
-            header('content-type: application/json');
+            header('Content-type: application/json');
             echo json_encode($arrayresult);
-            exit;
+
         }
     } else {
-        echo '<h4>No record found</h4>';
+        echo "No data found for this user.";
     }
+    exit; // Stop further execution since this is an AJAX request
 }
 // Edit data end
 
@@ -228,27 +229,27 @@ include('includes/navbar.php');
                 <div class="modal-body">
                     <div class="form-group mb-3">
 
-                        <input type="hidden" class="form-control" id="supplier_id" name="id">
+                        <input type="hidden" class="form-control" id="product_id" name="id">
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="name">Supplier Name</label>
+                        <label for="name">Product Name</label>
                         <input type="text" class="form-control" id="name" name="name" placeholder="enter name">
                     </div>
                     <!-- id use for jquery, name use for php -->
 
                     <div class="form-group">
-                        <label for="email">Supplier Email</label>
+                        <label for="email">Product Description</label>
                         <input type="text" class="form-control" id="email" name="email" placeholder="enter email">
                     </div>
 
                     <div class="form-group">
-                        <label for="phone">Supplier Contact No</label>
+                        <label for="phone">Product Category</label>
                         <input type="text" class="form-control" id="phone" name="phone" placeholder="enter number">
                     </div>
 
                     <div class="form-group">
-                        <label for="address">Supplier Address</label>
+                        <label for="address">Sell Price</label>
                         <input type="text" class="form-control" id="address" name="address" placeholder="enter address">
                     </div>
 
@@ -398,7 +399,7 @@ include('includes/footer.php');
             e.preventDefault();
 
 
-            var user_id = $(this).closest('tr').find('.user_id').val();
+            var user_id = $(this).closest('tr').find('.user_id').text();
             console.log(user_id);
 
             $.ajax({
@@ -412,17 +413,13 @@ include('includes/footer.php');
                     // console.log(response);
 
                     $.each(response, function(key, value) {
-                        // console.log(value['name']);
-                        $('#supplier_id').val(value['id']);
-                        $('#name').val(value['name']);
-                        $('#email').val(value['email']);
-                        $('#phone').val(value['phone']);
-                        $('#address').val(value['address']);
-                        //id,name,email,.. are database column names.    user_id,name,email,.. are form's field ids used in modal
-
+                        $('#supplier_id').val(value[0]);
+                        $('#name').val(value[1]);
+                        $('#email').val(value[2]);
+                        $('#phone').val(value[3]);
+                        $('#address').val(value[4]);
                     });
-
-
+                    
                     $('#editdata').modal('show');
 
                 }
