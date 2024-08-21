@@ -11,9 +11,32 @@ if (isset($_POST['save_supp_data'])) {
     $confirmpass = $_POST['confirmpass'];
     $role = $_POST['role'];
 
-    // Validate that password and confirm password match
+    // Basic password validation
+    $errors = [];
+    if (strlen($pass) < 8) {
+        $errors[] = "Password must be at least 8 characters long!";
+    }
+    if (!preg_match("/[A-Z]/", $pass)) {
+        $errors[] = "Password must include at least one uppercase letter!";
+    }
+    if (!preg_match("/[a-z]/", $pass)) {
+        $errors[] = "Password must include at least one lowercase letter!";
+    }
+    if (!preg_match("/[0-9]/", $pass)) {
+        $errors[] = "Password must include at least one number!";
+    }
+    if (!preg_match("/[\W]/", $pass)) {
+        $errors[] = "Password must include at least one special character!";
+    }
+
+    // Check if password and confirm password match
     if ($pass !== $confirmpass) {
-        $_SESSION['status'] = "Password and Confirm Password do not match!";
+        $errors[] = "Password and Confirm Password do not match!";
+    }
+
+    // If there are errors, set them in the session
+    if (!empty($errors)) {
+        $_SESSION['status'] = implode("<br>", $errors);
     } else {
         // Check if username is unique
         $check_username_query = "SELECT * FROM users WHERE username='$username'";
@@ -22,7 +45,7 @@ if (isset($_POST['save_supp_data'])) {
         if (mysqli_num_rows($check_username_run) > 0) {
             $_SESSION['status'] = "Username already exists!";
         } else {
-            // If both validations pass, insert the new user
+            // If all validations pass, insert the new user
             $hashed_pass = hash('sha256', $pass); // Hash the password using SHA-256
             $insert_query = "INSERT INTO users(username, password, role) VALUES ('$username', '$hashed_pass', '$role')";
             $insert_query_run = mysqli_query($con, $insert_query);
@@ -39,6 +62,7 @@ if (isset($_POST['save_supp_data'])) {
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
+
 
 // Insert data end
 
@@ -155,6 +179,7 @@ include('includes/navbar.php');
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="insertdataLabel">Add User</h5>
+                
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -261,14 +286,15 @@ include('includes/navbar.php');
 <div class="container-fluid  mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <!-- Success messge show start -->
+
+        <!-- Success messge show start -->
             <?php
             if (isset($_SESSION['status']) && $_SESSION['status'] != '') {
 
             ?>
 
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Hey !</strong> <?php echo $_SESSION['status']; ?>
+                    <strong></strong> <?php echo $_SESSION['status']; ?>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
