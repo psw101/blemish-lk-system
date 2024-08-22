@@ -43,19 +43,13 @@ CREATE TABLE product (
     FOREIGN KEY (categories_id) REFERENCES categories(categories_id)
 );
 
--- Products Table
-CREATE TABLE products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
-    product_name VARCHAR(255) NOT NULL,
-    category_id INT,
-    supplier_id INT,
-    price DECIMAL(10, 2) NOT NULL,
+-- Inventory Table
+CREATE TABLE inventory (
+    inventory_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT(11) NOT NULL,
+    product_name VARCHAR(255) NOT NULL,    
     quantity_in_stock INT NOT NULL,
-    size VARCHAR(50),
-    color VARCHAR(50),
-    description TEXT,
-    FOREIGN KEY (category_id) REFERENCES categories(categories_id),
-    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
 -- Orders Table (Modified with 'supplier_id' column)
@@ -79,14 +73,6 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
--- Inventory Table
-CREATE TABLE inventory (
-    inventory_id INT AUTO_INCREMENT PRIMARY KEY,
-    product_id INT,
-    quantity INT NOT NULL,
-    remarks TEXT,
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
-);
 
 -- Sales Table
 CREATE TABLE sales (
