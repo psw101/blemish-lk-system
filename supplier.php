@@ -81,6 +81,7 @@ if (isset($_POST['update_data'])) {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $address = $_POST['address'];
+    //id,name,email inside POST are input field's name
 
     $update_query = "UPDATE supplier SET name='$name', email='$email', phone='$phone', address='$address' WHERE id='$id'";
     $update_query_run = mysqli_query($con, $update_query);

@@ -78,13 +78,13 @@ if (isset($_POST['click_edit_btn'])) {
 
 //update data start
 if (isset($_POST['update_data'])) {
-    $id = $_POST['product_id'];
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
+    $productid = $_POST['productid'];
+    $productname = $_POST['productname'];
+    $productdes = $_POST['productdes'];
+    $categoryid = $_POST['categoryid'];
+    $sellprice = $_POST['sellprice'];
 
-    $update_query = "UPDATE product SET product_name='$name', product_des='$email', categories_id='$phone', sellPrice='$address' WHERE product_id='$id'";
+    $update_query = "UPDATE product SET product_name='$productname', product_des='$productdes', categories_id='$categoryid', sellPrice='$sellprice' WHERE product_id='$productid'";
     $update_query_run = mysqli_query($con, $update_query);
 
     if ($update_query_run) {
@@ -229,28 +229,28 @@ include('includes/navbar.php');
                 <div class="modal-body">
                     <div class="form-group mb-3">
 
-                        <input type="hidden" class="form-control" id="product_id" name="id">
+                        <input type="hidden" class="form-control" id="product_id" name="productid">
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="name">Product Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="enter name">
+                        <input type="text" class="form-control" id="product_name" name="productname" placeholder="enter name">
                     </div>
                     <!-- id use for jquery, name use for php -->
 
                     <div class="form-group">
                         <label for="email">Product Description</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="enter email">
+                        <input type="text" class="form-control" id="product_des" name="productdes" placeholder="enter email">
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Product Category</label>
-                        <input type="text" class="form-control" id="phone" name="phone" placeholder="enter number">
+                        <input type="text" class="form-control" id="category_id" name="categoryid" placeholder="enter number">
                     </div>
 
                     <div class="form-group">
                         <label for="address">Sell Price</label>
-                        <input type="text" class="form-control" id="address" name="address" placeholder="enter address">
+                        <input type="text" class="form-control" id="sell_price" name="sellprice" placeholder="enter address">
                     </div>
 
                 </div>
@@ -413,11 +413,11 @@ include('includes/footer.php');
                     // console.log(response);
 
                     $.each(response, function(key, value) {
-                        $('#supplier_id').val(value[0]);
-                        $('#name').val(value[1]);
-                        $('#email').val(value[2]);
-                        $('#phone').val(value[3]);
-                        $('#address').val(value[4]);
+                        $('#product_id').val(value[0]);
+                        $('#product_name').val(value[1]);
+                        $('#product_des').val(value[2]);
+                        $('#category_id').val(value[3]);
+                        $('#sell_price').val(value[4]);
                     });
                     
                     $('#editdata').modal('show');
