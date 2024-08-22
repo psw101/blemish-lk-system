@@ -1,6 +1,4 @@
 <?php
-// config.php
-
 // Define the timeout duration (in seconds)
 $timeout_duration = 6000; // 1 hour
 

@@ -1,13 +1,4 @@
 <?php
-// Include the configuration file
-include_once './session-config.php';
-
-// Check if the user is logged in
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-  // Redirect to login page
-  header("Location: login.php");
-  exit();
-}
 
 use includes\header;
 use includes\navbar;
@@ -24,7 +15,7 @@ include_once 'includes/navbar.php';
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+    <a href="./generate_report.php?action=downloadInventoryCsv" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
         class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
   </div>
 
@@ -117,25 +108,6 @@ include_once 'includes/navbar.php';
 
 
   <!-- Content Row -->
-
-
-  <!-- Bootstrap Modal for session timeout warning -->
-  <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="sessionTimeoutModalLabel">Session Timeout Warning</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Your session is about to expire. Please save your work to avoid losing any unsaved data.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
 
