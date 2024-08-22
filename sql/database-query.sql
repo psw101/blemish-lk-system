@@ -87,3 +87,24 @@ CREATE TABLE inventory (
     remarks TEXT,
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
+
+-- Sales Table
+CREATE TABLE sales (
+    sales_id INT AUTO_INCREMENT PRIMARY KEY,
+    sale_date DATE NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    customer_id INT,  -- Optional: if you want to track sales by customer
+    -- Add any other necessary fields for the sale itself
+);
+
+-- Sales Items Table
+CREATE TABLE sales_items (
+    sales_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    sales_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    total_price DECIMAL(10, 2) AS (quantity * price) STORED,
+    FOREIGN KEY (sales_id) REFERENCES sales(sales_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
