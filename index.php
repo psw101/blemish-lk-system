@@ -15,8 +15,7 @@ include_once 'includes/navbar.php';
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <a href="./generate_report.php?action=downloadInventoryCsv" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+    <a href="./generate_report.php?action=downloadInventoryCsv" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fa-solid fa-cloud-arrow-down text-white-50 mr-1"> </i>Download Inventory Report</a>
   </div>
 
   <!-- Content Row -->
