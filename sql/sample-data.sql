@@ -1,54 +1,63 @@
 USE blemish_inventory;
 
--- Insert Sample Users
+-- Insert Sample Data into the `users` Table
 INSERT INTO users (username, password, role) VALUES
-('admin', SHA2('adminpassword', 256), 'admin'),
-('user1', SHA2('user1password', 256), 'user');
+('admin', SHA2('admin123', 256), 'admin'),
+('john_doe', SHA2('password123', 256), 'user'),
+('jane_smith', SHA2('password456', 256), 'user');
 
--- Insert Sample Permissions
+-- Insert Sample Data into the `permissions` Table
 INSERT INTO permissions (user_id, permission_name) VALUES
-(1, 'manage_users'),
-(1, 'manage_inventory'),
-(2, 'view_products');
+(1, 'view_inventory'),
+(1, 'edit_inventory'),
+(2, 'view_inventory');
 
--- Insert Sample Suppliers
+-- Insert Sample Data into the `supplier` Table
 INSERT INTO supplier (name, email, phone, address) VALUES
-('Supplier A', 'contact@suppliera.com', '+1234567890', '123 Supplier A St, City'),
-('Supplier B', 'contact@supplierb.com', '+0987654321', '456 Supplier B Ave, City');
+('ABC Textiles', 'contact@abctextiles.com', '123-456-7890', '123 Textile Avenue, City A'),
+('Fashion Fabrics', 'info@fashionfabrics.com', '234-567-8901', '456 Fabric Road, City B');
 
--- Insert Sample Categories
+-- Insert Sample Data into the `categories` Table
 INSERT INTO categories (categories_name) VALUES
-('Tops'),
-('Bottoms'),
-('Outerwear');
+('T-Shirts'),
+('Jeans'),
+('Jackets'),
+('Accessories');
 
--- Insert Sample Products
+-- Insert Sample Data into the `product` Table
 INSERT INTO product (product_name, product_des, categories_id, sellPrice) VALUES
-('Basic T-Shirt', '100% cotton, crew neck', 1, '9.99'),
-('Denim Jeans', 'Slim fit, dark wash', 2, '29.99'),
-('Winter Jacket', 'Waterproof, hooded', 3, '79.99');
+('Classic White T-Shirt', '100% Cotton, Unisex', 1, '15.99'),
+('Denim Jeans', 'Slim Fit, Blue', 2, '49.99'),
+('Leather Jacket', 'Black, Genuine Leather', 3, '129.99'),
+('Wool Scarf', 'Warm and Cozy', 4, '19.99');
 
-INSERT INTO products (product_name, category_id, supplier_id, price, quantity_in_stock, size, color, description) VALUES
-('Basic T-Shirt', 1, 1, 9.99, 100, 'M', 'Black', '100% cotton, crew neck'),
-('Denim Jeans', 2, 2, 29.99, 50, 'L', 'Dark Blue', 'Slim fit, dark wash'),
-('Winter Jacket', 3, 1, 79.99, 25, 'XL', 'Navy', 'Waterproof, hooded');
+-- Insert Sample Data into the `inventory` Table
+INSERT INTO inventory (product_id, product_name, quantity_in_stock) VALUES
+(1, 'Classic White T-Shirt', 150),
+(2, 'Denim Jeans', 75),
+(3, 'Leather Jacket', 30),
+(4, 'Wool Scarf', 200);
 
--- Insert Sample Orders
+-- Insert Sample Data into the `orders` Table
 INSERT INTO orders (order_date, total_amount, supplier_id) VALUES
-('2024-08-01', 999.75, 1),
-('2024-08-15', 1499.50, 2);
+('2024-08-01', 2000.00, 1),
+('2024-08-05', 3500.50, 2);
 
--- Insert Sample Order Items
+-- Insert Sample Data into the `order_items` Table
 INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES
-(1, 1, 50, 9.99, 499.50),
-(1, 2, 10, 29.99, 299.90),
-(1, 3, 5, 79.99, 399.95),
-(2, 1, 50, 9.99, 499.50),
-(2, 2, 20, 29.99, 599.80),
-(2, 3, 10, 79.99, 799.90);
+(1, 1, 100, 10.00, 1000.00),
+(1, 2, 50, 20.00, 1000.00),
+(2, 3, 20, 50.00, 1000.00),
+(2, 4, 100, 25.00, 2500.00);
 
--- Insert Sample Inventory
-INSERT INTO inventory (product_id, quantity, remarks) VALUES
-(1, 150, 'Restocked from Order 1 and Order 2'),
-(2, 70, 'Restocked from Order 1 and Order 2'),
-(3, 35, 'Restocked from Order 1 and Order 2');
+-- Insert Sample Data into the `sales` Table
+INSERT INTO sales (sale_date, total_amount) VALUES
+('2024-08-10', 750.00),
+('2024-08-15', 1200.00);
+
+-- Insert Sample Data into the `sales_items` Table
+INSERT INTO sales_items (sales_id, product_id, quantity, price) VALUES
+(1, 1, 10, 15.99),
+(1, 2, 5, 49.99),
+(2, 3, 2, 129.99),
+(2, 4, 20, 19.99);

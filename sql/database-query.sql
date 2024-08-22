@@ -70,7 +70,7 @@ CREATE TABLE order_items (
     price DECIMAL(10, 2) NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
 
@@ -78,7 +78,7 @@ CREATE TABLE order_items (
 CREATE TABLE sales (
     sales_id INT AUTO_INCREMENT PRIMARY KEY,
     sale_date DATE NOT NULL,
-    total_amount DECIMAL(10, 2) NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL
 );
 
 -- Sales Items Table
@@ -90,5 +90,5 @@ CREATE TABLE sales_items (
     price DECIMAL(10, 2) NOT NULL,
     total_price DECIMAL(10, 2) AS (quantity * price) STORED,
     FOREIGN KEY (sales_id) REFERENCES sales(sales_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
