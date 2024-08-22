@@ -8,11 +8,11 @@ require('dbcon.php');
 if (isset($_POST['save_supp_data'])) {
     $productname = $_POST['productname'];
     $productdes = $_POST['productdes'];
-    $productcategory = $_POST['category'];
+    $productcategory = $_POST['categoryid'];
     $sellprice = $_POST['productprice'];
     
 
-    $insert_query = "INSERT INTO product(product_name,product_des,categories_id,sellPrice) VALUES ('$productname', '$productdes', '$productcategory', '$sellprice')";
+    $insert_query = "INSERT INTO product(product_name,product_des,categories_id,sellPrice) VALUES ('" . mysqli_real_escape_string($con, $productname) . "', '" . mysqli_real_escape_string($con, $productdes) . "', '" . mysqli_real_escape_string($con, $productcategory) . "', '" . mysqli_real_escape_string($con, $sellprice) . "')";
     $insert_query_run = mysqli_query($con, $insert_query);
 
     if ($insert_query_run) {
@@ -165,13 +165,34 @@ include('includes/navbar.php');
                     </div>
                     
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="category">Category</label>
                         <select class="form-control" name="category">
                             <option value="Tshirt">T-shirt</option>
                             <option value="Shirt">Shirt</option>
                             <option value="trousers">Trousers</option>
                             <option value="skirts">Skirts</option>
+                        </select>
+                    </div> -->
+
+                    <div class="form-group">
+                        <label for="category">Product Category</label>
+                        <select class="form-control" id="category_id" name="categoryid">
+                            <option value="">Select a category</option>
+                            <?php
+                            // SQL query to get options
+                            $category_query = "SELECT categories_id, categories_name FROM categories";
+                            $category_query_run = mysqli_query($con, $category_query);
+
+                            if ($category_query_run && mysqli_num_rows($category_query_run) > 0) {
+                                // Output options
+                                while ($row = mysqli_fetch_assoc($category_query_run)) {
+                                    echo "<option value='" . $row['categories_id'] . "'>" . $row['categories_name'] . "</option>";
+                                }
+                            } else {
+                                echo "<option>No categories available</option>";
+                            }
+                            ?>
                         </select>
                     </div>
 
@@ -311,7 +332,7 @@ include('includes/navbar.php');
                         </thead>
                         <tbody>
                             <?php
-                            $fetch_query = "SELECT * FROM product";
+                            $fetch_query = "SELECT p.product_id, p.product_name, p.product_des, c.categories_name, p.sellPrice FROM product p JOIN categories c ON p.categories_id = c.categories_id";
                             $fetch_query_run = mysqli_query($con, $fetch_query);
 
                             if (mysqli_num_rows($fetch_query_run) > 0) {
@@ -321,7 +342,7 @@ include('includes/navbar.php');
                                         <td class="user_id"><?php echo $row['product_id']; ?></td>
                                         <td><?php echo $row['product_name']; ?></td>
                                         <td><?php echo $row['product_des']; ?></td>
-                                        <td><?php echo $row['categories_id']; ?></td>
+                                        <td><?php echo $row['categories_name']; ?></td>
                                         <td><?php echo $row['sellPrice']; ?></td>
                                         <td>
                                             <a href="#" class="btn btn-primary btn-sm view_data">View</a>
