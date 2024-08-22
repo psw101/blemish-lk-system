@@ -228,14 +228,27 @@ if (isset($_POST['add_order_item'])) {
     if (empty($order_id) || empty($product_id) || empty($quantity) || empty($price)) {
         $_SESSION['status'] = "All fields are required";
     } else {
-        $query = "INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES ('$order_id', '$product_id', '$quantity', '$price', '$total_price')";
-        $query_run = mysqli_query($con, $query);
-        if ($query_run) {
-            $_SESSION['status_2'] = "Data inserted successfully!";
+        $query_for_validate_order_id = "SELECT order_id FROM orders WHERE order_id = '$order_id'";
+        $query_run_for_order_id = mysqli_query($con, $query_for_validate_order_id);
+        if (mysqli_num_rows($query_run_for_order_id) == 0) {
+            $_SESSION['status_2'] = "Order ID does not exist!";
         } else {
-            $_SESSION['status_2'] = "Insertion of data failed!";
+            $query_for_validate_product_id = "SELECT product_id FROM products WHERE product_id = '$product_id'";
+            $query_run_for_product_id = mysqli_query($con, $query_for_validate_product_id);
+            if (mysqli_num_rows($query_run_for_product_id) == 0) {
+                $_SESSION['status_2'] = "Product ID does not exist!";
+            } else {
+                $query = "INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES ('$order_id', '$product_id', '$quantity', '$price', '$total_price')";
+                $query_run = mysqli_query($con, $query);
+                if ($query_run) {
+                    $_SESSION['status_2'] = "Data inserted successfully!";
+                } else {
+                    $_SESSION['status_2'] = "Insertion of data failed!";
+                }
+            }
         }
     }
+    
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -1056,7 +1069,7 @@ include('includes/footer.php');
                         // Hide the confirmation modal
                         $('#deleteOrderModal').modal('hide');
                         window.location.reload();
-                    }else{
+                    } else {
                         alert('Failed to delete order');
                     }
 
