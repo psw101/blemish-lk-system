@@ -93,8 +93,6 @@ CREATE TABLE sales (
     sales_id INT AUTO_INCREMENT PRIMARY KEY,
     sale_date DATE NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    customer_id INT,  -- Optional: if you want to track sales by customer
-    -- Add any other necessary fields for the sale itself
 );
 
 -- Sales Items Table
