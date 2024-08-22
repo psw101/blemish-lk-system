@@ -44,7 +44,7 @@
 <li class="nav-item">
   <a class="nav-link" href="orders.php">
     <i class="fas fa-fw fa-chart-area"></i>
-    <span>Inventory</span></a>
+    <span>Orders</span></a>
     
 </li>
 
@@ -54,6 +54,15 @@
   <a class="nav-link" href="sales.php">
     <i class="fas fa-fw fa-chart-area"></i>
     <span>Sales</span></a>
+    
+</li>
+
+<hr class="sidebar-divider my-0">
+
+<li class="nav-item">
+  <a class="nav-link" href="inventory.php">
+    <i class="fas fa-fw fa-chart-area"></i>
+    <span>Inventory</span></a>
     
 </li>
 
