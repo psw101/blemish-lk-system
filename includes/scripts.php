@@ -64,7 +64,6 @@
   <?php
 
     include_once('./dbcon.php');
-    $connection = $con;
 
     if (isset($_POST['registerbtn'])) {
         $username = $_POST['username'];
@@ -74,7 +73,7 @@
 
         if ($password === $confirm_password) {
             $query = "INSERT INTO register (username,email,password) VALUES ('$username','$email','$password')";
-            $query_run = mysqli_query($connection, $query);
+            $query_run = mysqli_query($con, $query);
 
             if ($query_run) {
                 echo "done";
