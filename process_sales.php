@@ -50,8 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_commit($con);
 
         // Redirect to a success page or display a success message
-        $_SESSION['success'] = "Sales added successfully";
-        header('Location: orders.php'); // Change to your success page
+        header('Location: sales.php'); // Change to your success page
         exit;
         
     } catch (Exception $e) {
