@@ -93,7 +93,7 @@ if (isset($_POST['click_edit_btn'])) {
     $arrayresult = [];
 
     // echo $id;
-    $fetch_query = "SELECT * FROM supplier WHERE id='$id'";
+    $fetch_query = "SELECT * FROM users WHERE user_id='$id'";
     $fetch_query_run = mysqli_query($con, $fetch_query);
 
     if (mysqli_num_rows($fetch_query_run) > 0) {
@@ -114,18 +114,30 @@ if (isset($_POST['click_edit_btn'])) {
 //update data start
 if (isset($_POST['update_data'])) {
     $id = $_POST['id'];
-    $name = $_POST['name'];
+    $user_name = $_POST['user_name'];
+    $password = $_POST['password'];
+    $role = $_POST['role'];
 
-    $update_query = "UPDATE supplier SET name='$name' WHERE id='$id'";
-    $update_query_run = mysqli_query($con, $update_query);
+    if ($pass !== $confirmpass) {
+        $errors[] = "Password and Confirm Password do not match!";
+    }
+
+    // If there are errors, set them in the session
+    if (!empty($errors)) {
+        $_SESSION['status'] = implode("<br>", $errors);
+    } else {
+        $hashed_pass = hash('sha256', $password);
+        $update_query = "UPDATE users SET username='$user_name', password = '$hashed_pass', role = '$role'  WHERE user_id='$id'";
+        $update_query_run = mysqli_query($con, $update_query);
+    }
 
     if ($update_query_run) {
         $_SESSION['status'] = "Data updated successfully !";
-        header('Location: supplier.php');
+        header('Location: users.php');
         exit;
     } else {
         $_SESSION['status'] = "Data updation failed !";
-        header('Location: supplier.php');
+        header('Location: users.php');
         exit;
     }
 }
@@ -263,12 +275,30 @@ include('includes/navbar.php');
                 <div class="modal-body">
                     <div class="form-group mb-3">
 
-                        <input type="hidden" class="form-control" id="supplier_id" name="id">
+                        <input type="hidden" class="form-control" id="user_id" name="id">
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="name">Supplier Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="enter name">
+                        <label for="name">User Name</label>
+                        <input type="text" class="form-control" id="name" name="user_name" placeholder="enter name">
+
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="enter password">
+
+                        <label for="confirm passwrod">confirm passwrod</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="enter confirm password">
+
+
+                        <label for="role">Role</label>
+                        <select class="form-control" name="role">
+                            <option value="" disabled selected>Choose one</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+
+
+
+
                     </div>
                     <!-- id use for jquery, name use for php -->
 
@@ -383,7 +413,7 @@ include('includes/footer.php');
 
 
             var user_id = $(this).closest('tr').find('.user_id').text();
-            // console.log(user_id);
+            //  console.log(user_id);
 
             $.ajax({
                 method: "POST",
@@ -393,7 +423,7 @@ include('includes/footer.php');
                     'user_id': user_id,
                 },
                 success: function(response) {
-                    // console.log(response);
+                //console.log(response);
 
                     $('.view_user_data').html(response);
                     $('#viewuser').modal('show');
@@ -413,7 +443,7 @@ include('includes/footer.php');
             e.preventDefault();
 
             var user_id = $(this).closest('tr').find('.user_id').text();
-            // console.log(user_id);
+             console.log(user_id);
 
             $.ajax({
                 method: "POST",
@@ -423,20 +453,22 @@ include('includes/footer.php');
                     'user_id': user_id,
                 },
                 success: function(response) {
-                    // console.log(response);
+                    console.log(response);
 
                     $.each(response, function(key, value) {
                         // console.log(value['name']);
-                        $('#supplier_id').val(value['id']);
-                        $('#name').val(value['name']);
+                        $('#user_id').val(value['user_id']);
+                        $('#name').val(value['username']);
+                        $('#role').val(value['role']);
                         //id,name,email,.. are database column names.    user_id,name,email,.. are form's field ids used in modal
-
                     });
 
 
                     $('#editdata').modal('show');
-
+                    console.log(response);
                 }
+
+             
             });
 
 
@@ -454,7 +486,7 @@ include('includes/footer.php');
 
             $.ajax({
                 method: "POST",
-                url: "supplier.php",
+                url: "users.php",
                 data: {
                     'click_delete_btn': true,
                     'user_id': user_id,
