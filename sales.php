@@ -30,7 +30,7 @@ function getProductsJson()
 
     // Free the result set and close the connection
     mysqli_free_result($result);
-    mysqli_close($con);
+
 
     return json_encode($products);
 }
@@ -40,6 +40,49 @@ if (isset($_GET['action']) && $_GET['action'] == 'getProducts') {
     echo getProductsJson();
     exit;
 }
+
+if (isset($_POST['click_view_btn']) && isset($_POST['sales_id'])) {
+    $sales_id = intval($_POST['sales_id']);
+
+    // Fetch sale details
+    $saleQuery = "SELECT sales_id, sale_date, total_amount FROM sales WHERE sales_id = $sales_id";
+    $saleResult = mysqli_query($con, $saleQuery);
+    
+    if ($saleResult && mysqli_num_rows($saleResult) > 0) {
+        $saleDetails = mysqli_fetch_assoc($saleResult);
+
+        // Fetch sale items
+        $itemsQuery = "SELECT p.product_name, si.quantity, si.price, si.total_price
+                       FROM sales_items si
+                       JOIN products p ON si.product_id = p.product_id
+                       WHERE si.sales_id = $sales_id";
+        $itemsResult = mysqli_query($con, $itemsQuery);
+        
+        if ($itemsResult) {
+            $itemsHtml = '<h4>Sale ID: ' . htmlspecialchars($saleDetails['sales_id']) . '</h4>';
+            $itemsHtml .= '<p>Sale Date: ' . htmlspecialchars($saleDetails['sale_date']) . '</p>';
+            $itemsHtml .= '<p>Total Amount: $' . htmlspecialchars($saleDetails['total_amount']) . '</p>';
+            $itemsHtml .= '<h5>Items:</h5>';
+            $itemsHtml .= '<ul class="list-group">';
+            
+            while ($item = mysqli_fetch_assoc($itemsResult)) {
+                $itemsHtml .= '<li class="list-group-item">' . htmlspecialchars($item['product_name']) . ' - '
+                    . htmlspecialchars($item['quantity']) . ' - $' . htmlspecialchars($item['total_price']) . '</li>';
+            }
+            $itemsHtml .= '</ul>';
+
+            echo $itemsHtml;
+        } else {
+            echo '<p>No items found.</p>';
+        }
+    } else {
+        echo '<p>No sale details found.</p>';
+    }
+
+    mysqli_close($con);
+    exit;
+}
+
 ?>
 
 <?php
@@ -118,6 +161,83 @@ include_once('./includes/navbar.php');
     </div>
 </div>
 
+<div class="container-fluid mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h4 class="card-title font-weight-bold">Recent Sales</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Sale ID</th>
+                                <th>Sale Date</th>
+                                <th>Total Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if ($con) {
+                                $query = "SELECT sales_id, sale_date, total_amount FROM sales ORDER BY sale_date DESC LIMIT 10";
+                                $result = mysqli_query($con, $query);
+
+                                if (mysqli_num_rows($result) > 0) {
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo "<tr>";
+                                        echo "<td class='sales_id_cls'>" . htmlspecialchars($row['sales_id']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['sale_date']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['total_amount']) . "</td>";
+                                        echo "<td><button type='button' data-toggle='modal' data-target='#viewSaleModal' class='btn btn-info btn-sm view_data' data-sales-id='" . htmlspecialchars($row['sales_id']) . "'>View</button></td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='4' class='text-center'>No recent sales found</td></tr>";
+                                }
+
+                                mysqli_free_result($result);
+                            } else {
+                                echo "<tr><td colspan='4' class='text-center'>Connection error</td></tr>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Modal -->
+ <!-- Modal -->
+<div class="modal fade" id="viewSaleModal" tabindex="-1" aria-labelledby="viewSaleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewSaleModalLabel">Sale Details</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body view_sale_data">
+                <!-- Sale details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<?php
+include_once('./includes/footer.php');
+include_once('./includes/scripts.php');
+?>
+
 <script>
     async function getProductOptions() {
         const response = await fetch('?action=getProducts');
@@ -182,9 +302,30 @@ include_once('./includes/navbar.php');
         container.appendChild(newRow);
         updatePrices(); // Update prices for the new row
     }
-</script>
 
-<?php
-include_once('./includes/footer.php');
-include_once('./includes/scripts.php');
-?>
+// view data start
+$(document).ready(function() {
+    $('.view_data').click(function(e) {
+        e.preventDefault();
+
+        // Get the sales_id from the clicked row
+        var sales_id = $(this).closest('tr').find('.sales_id_cls').text();
+        //console.log(sales_id);
+
+        $.ajax({
+            method: "POST",
+            url: "<?php echo $_SERVER['PHP_SELF']; ?>",
+            data: {
+                'click_view_btn': true,
+                'sales_id': sales_id,
+            },
+            success: function(response) {
+                $('.view_sale_data').html(response);
+                $('#viewSaleModal').modal('show');
+            }
+        });
+    });
+});
+// view data end
+
+</script>
