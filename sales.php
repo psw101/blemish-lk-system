@@ -14,7 +14,7 @@ function getProductsJson()
     }
 
     // Prepare the query
-    $query = "SELECT product_id, product_name FROM products";
+    $query = "SELECT product_id, product_name, price FROM products";
     $result = mysqli_query($con, $query);
 
     // Check if the query was successful
@@ -47,7 +47,6 @@ include_once('./includes/header.php');
 include_once('./includes/navbar.php');
 ?>
 
-
 <div class="container-fluid mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -66,8 +65,15 @@ include_once('./includes/navbar.php');
 
                             <div class="form-group col-lg-6">
                                 <label for="total_amount">Total Amount</label>
-                                <input type="number" step="0.01" class="form-control" id="total_amount" name="total_amount" required>
+                                <input type="number" step="0.01" class="form-control" id="total_amount" name="total_amount" required readonly>
                             </div>
+
+                            <!-- Discount Input Field -->
+                            <div class="form-group col-lg-6">
+                                <label for="discount">Discount (%)</label>
+                                <input type="number" step="0.01" class="form-control" id="discount" name="discount" placeholder="Enter discount percentage" oninput="updatePrices()">
+                            </div>
+
                             <div class="col-lg-12">
                                 <hr>
                             </div>
@@ -78,11 +84,11 @@ include_once('./includes/navbar.php');
                             <div class="form-row">
                                 <div class="form-group col-lg-6">
                                     <label for="product_id">Product</label>
-                                    <select class="form-control" id="product_id" name="product_id[]" required>
+                                    <select class="form-control" id="product_id" name="product_id[]" onchange="updatePrices()" required>
                                         <?php
                                         $products = json_decode(getProductsJson(), true);
                                         foreach ($products as $product) {
-                                            echo "<option value='" . htmlspecialchars($product['product_id']) . "'>" . htmlspecialchars($product['product_name']) . "</option>";
+                                            echo "<option value='" . htmlspecialchars($product['product_id']) . "' data-price='" . htmlspecialchars($product['price']) . "'>" . htmlspecialchars($product['product_name']) . "</option>";
                                         }
                                         ?>
                                     </select>
@@ -90,12 +96,12 @@ include_once('./includes/navbar.php');
 
                                 <div class="form-group col-lg-3">
                                     <label for="quantity">Quantity</label>
-                                    <input type="number" class="form-control" id="quantity" name="quantity[]" required>
+                                    <input type="number" class="form-control" id="quantity" name="quantity[]" oninput="updatePrices()" required>
                                 </div>
 
                                 <div class="form-group col-lg-3">
                                     <label for="price">Price</label>
-                                    <input type="number" step="0.01" class="form-control" id="price" name="price[]" required>
+                                    <input type="number" step="0.01" class="form-control" id="price" name="price[]" required readonly>
                                 </div>
                                 <div class="col-12 d-lg-none">
                                     <hr>
@@ -123,8 +129,29 @@ include_once('./includes/navbar.php');
         }
 
         return data.map(product =>
-            `<option value="${product.product_id}">${product.product_name}</option>`
+            `<option value="${product.product_id}" data-price="${product.price}">${product.product_name}</option>`
         ).join('');
+    }
+
+    function updatePrices() {
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        const productSelects = document.querySelectorAll('select[name="product_id[]"]');
+        const quantityInputs = document.querySelectorAll('input[name="quantity[]"]');
+        const priceInputs = document.querySelectorAll('input[name="price[]"]');
+        let totalAmount = 0;
+
+        productSelects.forEach((select, index) => {
+            const selectedOption = select.options[select.selectedIndex];
+            const basePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const quantity = parseFloat(quantityInputs[index].value) || 1;
+            const finalPrice = basePrice * ((100 - discount) / 100);
+            priceInputs[index].value = finalPrice.toFixed(2);
+
+            // Update total amount
+            totalAmount += finalPrice * quantity;
+        });
+
+        document.getElementById('total_amount').value = totalAmount.toFixed(2);
     }
 
     async function addProductRow() {
@@ -136,23 +163,24 @@ include_once('./includes/navbar.php');
         newRow.innerHTML = `
                 <div class="form-group col-lg-6">
                     <label for="product_id">Product</label>
-                    <select class="form-control" name="product_id[]" required>
+                    <select class="form-control" name="product_id[]" onchange="updatePrices()" required>
                         ${productOptions}
                     </select>
                 </div>
                 <div class="form-group col-lg-3">
                     <label for="quantity">Quantity</label>
-                    <input type="number" class="form-control" name="quantity[]" required>
+                    <input type="number" class="form-control" name="quantity[]" oninput="updatePrices()" required>
                 </div>
                 <div class="form-group col-lg-3">
                     <label for="price">Price</label>
-                    <input type="number" step="0.01" class="form-control" name="price[]" required>
+                    <input type="number" step="0.01" class="form-control" name="price[]" required readonly>
                 </div>
                 <div class="col-12 d-lg-none">
                     <hr>
                 </div>
             `;
         container.appendChild(newRow);
+        updatePrices(); // Update prices for the new row
     }
 </script>
 
