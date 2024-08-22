@@ -248,7 +248,7 @@ if (isset($_POST['add_order_item'])) {
             }
         }
     }
-    
+
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
