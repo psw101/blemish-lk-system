@@ -145,7 +145,7 @@
                   <div class="input-group">
                     <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                     <div class="input-group-append">
-                      <button class="btn btn-primary" type="button">
+                      <button class="btn btn-primary" type="button"style="background-color: #8c4640; border-color: #8d4741;">
                         <i class="fas fa-search fa-sm"></i>
                       </button>
                     </div>
