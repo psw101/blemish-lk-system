@@ -14,7 +14,7 @@ function getProductsJson()
     }
 
     // Prepare the query
-    $query = "SELECT product_id, product_name, price FROM products";
+    $query = "SELECT product_id, product_name, sellPrice FROM product";
     $result = mysqli_query($con, $query);
 
     // Check if the query was successful
@@ -54,7 +54,7 @@ if (isset($_POST['click_view_btn']) && isset($_POST['sales_id'])) {
         // Fetch sale items
         $itemsQuery = "SELECT p.product_name, si.quantity, si.price, si.total_price
                        FROM sales_items si
-                       JOIN products p ON si.product_id = p.product_id
+                       JOIN product p ON si.product_id = p.product_id
                        WHERE si.sales_id = $sales_id";
         $itemsResult = mysqli_query($con, $itemsQuery);
         
@@ -131,7 +131,7 @@ include_once('./includes/navbar.php');
                                         <?php
                                         $products = json_decode(getProductsJson(), true);
                                         foreach ($products as $product) {
-                                            echo "<option value='" . htmlspecialchars($product['product_id']) . "' data-price='" . htmlspecialchars($product['price']) . "'>" . htmlspecialchars($product['product_name']) . "</option>";
+                                            echo "<option value='" . htmlspecialchars($product['product_id']) . "' data-price='" . htmlspecialchars($product['sellPrice']) . "'>" . htmlspecialchars($product['product_name']) . "</option>";
                                         }
                                         ?>
                                     </select>
