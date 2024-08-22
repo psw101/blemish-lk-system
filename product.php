@@ -32,17 +32,20 @@ if (isset($_POST['click_view_btn'])) {
     $user_id = $_POST['user_id'];
 
     // Fetch user data based on $user_id from the database
-    $query = "SELECT * FROM product WHERE product_id = '$user_id'";
+    $query = "SELECT p.product_id, p.product_name, p.product_des, c.categories_name, p.sellPrice
+FROM product p
+JOIN categories c ON p.categories_id = c.categories_id
+WHERE p.product_id = '$user_id'";
     $query_run = mysqli_query($con, $query);
 
     if (mysqli_num_rows($query_run) > 0) {
         $user_data = mysqli_fetch_assoc($query_run);
         // Assuming you want to return the data in some format (e.g., HTML or JSON)
         // Here is an example of returning the data as HTML
-        echo "<p>Name: " . $user_data['product_name'] . "</p>";
-        echo "<p>Email: " . $user_data['product_des'] . "</p>";
-        echo "<p>Category ID: " . $user_data['categories_id'] . "</p>";
-        echo "<p>Address: " . $user_data['sellPrice'] . "</p>";
+        echo "<p>Product Name: " . $user_data['product_name'] . "</p>";
+        echo "<p>Product Description: " . $user_data['product_des'] . "</p>";
+        echo "<p>Product Category: " . $user_data['categories_name'] . "</p>";
+        echo "<p>Sell Price: " . $user_data['sellPrice'] . "</p>";
     } else {
         echo "No data found for this user.";
     }
@@ -101,22 +104,25 @@ if (isset($_POST['update_data'])) {
 
 
 
-//Read Data start
+//Delete Data start
 if (isset($_POST['click_delete_btn'])) {
     $id = $_POST['user_id'];
 
-    $delete_query = "DELETE FROM supplier WHERE id='$id'";
+    $delete_query = "DELETE FROM product WHERE product_id='$id'";
     $delete_query_run = mysqli_query($con, $delete_query);
 
     if ($delete_query_run) {
-        $_SESSION['status'] = "Data deleted successfully !";
+        $_SESSION['status'] = "Data deleted successfully!";
+        header("Location: product.php"); // Redirect to the same page after deletion
         exit;
     } else {
-        $_SESSION['status'] = "Data deletion failed !";
+        $_SESSION['status'] = "Data deletion failed!";
+        header("Location: product.php");
         exit;
     }
 }
-//Read Data end
+
+//Delete Data end
 
 /* code.php FILE End */
 
@@ -264,9 +270,30 @@ include('includes/navbar.php');
                         <input type="text" class="form-control" id="product_des" name="productdes" placeholder="enter email">
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="phone">Product Category</label>
                         <input type="text" class="form-control" id="category_id" name="categoryid" placeholder="enter number">
+                    </div> -->
+
+                    <div class="form-group">
+                        <label for="category">Product Category</label>
+                        <select class="form-control" id="category_id" name="categoryid">
+                            <option value="">Select a category</option>
+                            <?php
+                            // SQL query to get options
+                            $category_query = "SELECT categories_id, categories_name FROM categories";
+                            $category_query_run = mysqli_query($con, $category_query);
+
+                            if ($category_query_run && mysqli_num_rows($category_query_run) > 0) {
+                                // Output options
+                                while ($row = mysqli_fetch_assoc($category_query_run)) {
+                                    echo "<option value='" . $row['categories_id'] . "'>" . $row['categories_name'] . "</option>";
+                                }
+                            } else {
+                                echo "<option>No categories available</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -284,6 +311,32 @@ include('includes/navbar.php');
     </div>
 </div>
 <!--Edit Modal End-->
+
+<!--Delete Modal Start-->
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this product?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form action="product.php" method="POST" class="d-inline">
+                    <input type="hidden" name="user_id" id="delete_user_id">
+                    <button type="submit" name="click_delete_btn" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal End -->
 
 <div class="container-fluid  mt-5">
     <div class="row justify-content-center">
@@ -331,42 +384,41 @@ include('includes/navbar.php');
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $fetch_query = "SELECT p.product_id, p.product_name, p.product_des, c.categories_name, p.sellPrice FROM product p JOIN categories c ON p.categories_id = c.categories_id";
-                            $fetch_query_run = mysqli_query($con, $fetch_query);
+    <?php
+    $fetch_query = "SELECT p.product_id, p.product_name, p.product_des, c.categories_name, p.sellPrice FROM product p JOIN categories c ON p.categories_id = c.categories_id";
+    $fetch_query_run = mysqli_query($con, $fetch_query);
 
-                            if (mysqli_num_rows($fetch_query_run) > 0) {
-                                while ($row = mysqli_fetch_array($fetch_query_run)) {
-                            ?>
-                                    <tr>
-                                        <td class="user_id"><?php echo $row['product_id']; ?></td>
-                                        <td><?php echo $row['product_name']; ?></td>
-                                        <td><?php echo $row['product_des']; ?></td>
-                                        <td><?php echo $row['categories_name']; ?></td>
-                                        <td><?php echo $row['sellPrice']; ?></td>
-                                        <td>
-                                            <a href="#" class="btn btn-primary btn-sm view_data">View</a>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-success btn-sm edit_data">Edit</a>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-danger btn-sm delete_btn" onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
-                                        </td>
-                                    </tr>
-                                <?php
-                                }
-                            } else {
-                                ?>
-                                <tr colspan="4">No Record Found</tr>
-                            <?php
+    if (mysqli_num_rows($fetch_query_run) > 0) {
+        while ($row = mysqli_fetch_array($fetch_query_run)) {
+    ?>
+            <tr>
+                <td class="user_id"><?php echo $row['product_id']; ?></td>
+                <td><?php echo $row['product_name']; ?></td>
+                <td><?php echo $row['product_des']; ?></td>
+                <td><?php echo $row['categories_name']; ?></td>
+                <td><?php echo $row['sellPrice']; ?></td>
+                <td>
+                    <a href="#" class="btn btn-primary btn-sm view_data">View</a>
+                </td>
+                <td>
+                    <a href="#" class="btn btn-success btn-sm edit_data">Edit</a>
+                </td>
+                <td>
+                    <a href="#" class="btn btn-danger btn-sm delete_btn" data-id="<?php echo $row['product_id']; ?>">Delete</a>
+                </td>
+            </tr>
+    <?php
+        }
+    } else {
+    ?>
+        <tr>
+            <td colspan="8">No Record Found</td>
+        </tr>
+    <?php
+    }
+    ?>
+</tbody>
 
-                            }
-
-                            ?>
-
-
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -453,33 +505,15 @@ include('includes/footer.php');
 
     //Delete data start
     $(document).ready(function() {
-        $('.delete_btn').click(function(e) {
-            e.preventDefault();
+    $('.delete_btn').click(function(e) {
+        e.preventDefault();
 
+        var user_id = $(this).data('id'); // Get the product ID from the data-id attribute
+        $('#delete_user_id').val(user_id); // Set the product ID in the hidden input field
 
-            var user_id = $(this).closest('tr').find('.user_id').text();
-            // console.log(supplier_id);
-
-            $.ajax({
-                method: "POST",
-                url: "product.php",
-                data: {
-                    'click_delete_btn': true,
-                    'user_id': user_id,
-                },
-                success: function(response) {
-                    console.log(response);
-                    window.location.reload();
-
-                    // $('.view_user_data').html(response);
-                    // $('#viewuser').modal('show');
-
-                }
-            });
-
-
-
-        })
+        $('#deleteConfirmationModal').modal('show'); // Show the modal
     });
+});
+
     //Delete data end
 </script>
