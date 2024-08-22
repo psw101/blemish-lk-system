@@ -46,7 +46,7 @@ if (isset($_POST['view_order'])) {
         if ($query_run->num_rows > 0) {
             while ($row = $query_run->fetch_assoc()) {
                 // Query to get product name
-                $product_query = "SELECT product_name FROM products WHERE product_id = ?";
+                $product_query = "SELECT product_name FROM product WHERE product_id = ?";
                 $product_stmt = $con->prepare($product_query);
                 $product_stmt->bind_param("i", $row['product_id']);
                 $product_stmt->execute();
@@ -84,7 +84,7 @@ if (isset($_POST['view_order_item'])) {
         echo "Order item not found.";
         exit;
     } else {
-        $product_name_query = $con->prepare("SELECT product_name FROM products WHERE product_id = ?");
+        $product_name_query = $con->prepare("SELECT product_name FROM product WHERE product_id = ?");
         $order_item_data = $result->fetch_assoc();
         $product_id = $order_item_data['product_id'];
         $product_name_query->bind_param("i", $product_id);
@@ -233,7 +233,7 @@ if (isset($_POST['add_order_item'])) {
         if (mysqli_num_rows($query_run_for_order_id) == 0) {
             $_SESSION['status_2'] = "Order ID does not exist!";
         } else {
-            $query_for_validate_product_id = "SELECT product_id FROM products WHERE product_id = '$product_id'";
+            $query_for_validate_product_id = "SELECT product_id FROM product WHERE product_id = '$product_id'";
             $query_run_for_product_id = mysqli_query($con, $query_for_validate_product_id);
             if (mysqli_num_rows($query_run_for_product_id) == 0) {
                 $_SESSION['status_2'] = "Product ID does not exist!";
