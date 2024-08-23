@@ -1,3 +1,4 @@
+  
    <!-- Sidebar -->
    <ul class="navbar-nav  sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: #8d4741;">
 
@@ -265,12 +266,17 @@
            <li class="nav-item dropdown no-arrow">
              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-
-                 ADMIN
+               
+  
+               <?php 
+                // session_start();
+                $usernamefromlogin = $_SESSION['username'];
+                 
+              ?>
+              <h6 class="mt-1"><?php echo $usernamefromlogin; ?></h6>
 
                </span>
-               <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
-             </a>
+               <i class="fa-solid fa-user ml-2" style="color: #8c4640;"></i>      </a>
              <!-- Dropdown - User Information -->
              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                <a class="dropdown-item" href="#">

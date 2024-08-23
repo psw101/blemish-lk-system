@@ -1,4 +1,5 @@
 <?php
+
 // Include the configuration file
 include_once './session-config.php';
 

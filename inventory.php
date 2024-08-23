@@ -44,13 +44,13 @@ include('includes/navbar.php');
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search by Product Name" name="search" 
                                value="<?php if (isset($_GET['search'])) { echo $_GET['search']; } ?>">
-                        <button class="btn btn-primary" type="submit">Search</button>
+                        <button class="btn btn-primary ml-2" type="submit">Search</button>
                     </div>
                 </div>
                 <!-- Filter section -->
                 <div class="col-lg-6 mb-2">
                     <div class="input-group">
-                        <select class="form-select" name="category">
+                        <select class="form-select p-1" name="category" style="border-radius: 5px; border-color: #d6d6e5; color: #8d8d96;">
                             <option value="">Filter by Category</option>
                             <?php
                             // Fetching categories for dropdown
@@ -65,7 +65,7 @@ include('includes/navbar.php');
                             }
                             ?>
                         </select>
-                        <button class="btn btn-primary" type="submit">Filter</button>
+                        <button class="btn btn-primary ml-2" type="submit">Filter</button>
                     </div>
                 </div>
             </div>
