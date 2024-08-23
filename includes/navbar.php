@@ -130,7 +130,8 @@
              </div>
            </div>
          </form> -->
-        <h5 class="ml-3 mt-2 p-2" style="color: #8d4741;">Blemish: Where Perfection Meets Style...</h5>       <!-- Topbar Navbar -->       <ul class="navbar-nav ml-auto">
+         <h5 class="ml-3 mt-2 p-2 d-none d-md-block" style="color: #8d4741;">Blemish: Where Perfection Meets Style...</h5>
+         <!-- Topbar Navbar -->       <ul class="navbar-nav ml-auto">
 
            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
            <li class="nav-item dropdown no-arrow d-sm-none">
