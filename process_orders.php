@@ -9,32 +9,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Get order details
         $order_date = mysqli_real_escape_string($con, $_POST['order_date']);
         $total_amount = floatval($_POST['total_amount']);
-        
+        $supplier_id = $_POST['supplier-name-id'];
+
         // Insert the new order
-        $orderQuery = "INSERT INTO orders (order_date, total_amount) VALUES ('$order_date', $total_amount)";
+        $orderQuery = "INSERT INTO orders (order_date, total_amount,supplier_id) VALUES ('$order_date', $total_amount, $supplier_id)";
         if (mysqli_query($con, $orderQuery)) {
             // Get the last inserted order ID
             $order_id = mysqli_insert_id($con);
-            
+
             // Prepare to insert order items
             $product_ids = $_POST['product_id'];
             $quantities = $_POST['quantity'];
             $prices = $_POST['price'];
-            
+
             $orderItemsQuery = "INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES ";
             $orderItemsValues = [];
-            
+
             for ($i = 0; $i < count($product_ids); $i++) {
                 $product_id = intval($product_ids[$i]);
                 $quantity = intval($quantities[$i]);
                 $price = floatval($prices[$i]);
                 $total_price = $quantity * $price;
-                
+
                 $orderItemsValues[] = "($order_id, $product_id, $quantity, $price, $total_price)";
             }
-            
+
             $orderItemsQuery .= implode(', ', $orderItemsValues);
-            
+
             if (mysqli_query($con, $orderItemsQuery)) {
                 // Redirect to a success page or show a success message
                 echo "<script>window.location.href = 'orders-new.php?showModal=true';</script>";
@@ -50,11 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Form fields are missing
         echo "<script>alert('Missing form fields.'); window.location.href='orders-new.php';</script>";
     }
-    
+
     // Close the connection
     mysqli_close($con);
 } else {
     // If the request method is not POST
     echo "<script>alert('Invalid request method.'); window.location.href='orders-new.php';</script>";
 }
-?>
