@@ -88,6 +88,8 @@ include_once('./includes/header.php');
 include_once('./includes/navbar.php');
 ?>
 
+<!-- Page Content -->
+<!-- this is the new orders page -->
 <div class="container-fluid mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -108,6 +110,32 @@ include_once('./includes/navbar.php');
                                 <label for="total_amount">Total Amount</label>
                                 <input type="number" step="0.01" class="form-control" id="total_amount" name="total_amount" required readonly>
                             </div>
+
+                            <div class="form-group col-lg-6">
+                                <label for="supplier-name-id">Supplier</label>
+                                <select class="form-control" id="supplier-name-id" name="supplier-name-id" required>
+                                    <?php
+                                    // Query to get supplier names
+                                    $query = "SELECT id, name FROM supplier";
+                                    $result = mysqli_query($con, $query);
+
+                                    // Check if the query was successful
+                                    if ($result) {
+                                        // Loop through each row and create an <option> element
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['name']) . '</option>';
+                                        }
+                                    } else {
+                                        // Handle query error
+                                        echo '<option value="">No suppliers available</option>';
+                                    }
+
+                                    // Close the result set
+                                    mysqli_free_result($result);
+                                    ?>
+                                </select>
+                            </div>
+
 
                             <div class="col-lg-12">
                                 <hr>
