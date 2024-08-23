@@ -250,7 +250,7 @@ include('includes/navbar.php');
 </div>
 <!-- Edit Modal End -->
 
-<div class="container-fluid px-4">
+<div class="container-fluid mt-5">
     <div class="card mt-4">
         <div class="card-header">
             <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>

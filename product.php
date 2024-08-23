@@ -34,13 +34,16 @@ include('includes/navbar.php');
             <div class="card">
                 <div class="card-header">
                     <h4 class="text-dark fw-bold">MANAGE PRODUCTS</h4>
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" class="float-right form-inline">
+                    
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" class="float-left form-inline mt-2">
                         <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search...">
                         <button type="submit" class="btn btn-primary">Search</button>
                     </form>
-                    <button type="button" class="btn btn-primary float-right mr-2" data-toggle="modal" data-target="#insertdata">
+
+                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
                         Add Products
                     </button>
+                    
                 </div>
 
                 <div class="card-body bg-light" style="max-height: 60vh; overflow-y: auto;">
