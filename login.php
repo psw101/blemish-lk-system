@@ -60,7 +60,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($password_hash === $db_password_hash) {
               // Password is correct, so start a new session
               $_SESSION['loggedin'] = true;
-              $_SESSION['username'] = $username;
+              $_SESSION['username'] = $username;  
+              $_SESSION['user_id'] = $user_id;          
+              
               header("Location: ./index.php");
               exit();
             } else {

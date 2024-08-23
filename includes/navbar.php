@@ -1,3 +1,4 @@
+  
    <!-- Sidebar -->
    <ul class="navbar-nav  sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: #8d4741;">
 
@@ -119,7 +120,7 @@
          </button>
 
          <!-- Topbar Search -->
-         <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+         <!-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
            <div class="input-group">
              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
              <div class="input-group-append">
@@ -128,11 +129,8 @@
                </button>
              </div>
            </div>
-         </form>
-
-
-         <!-- Topbar Navbar -->
-         <ul class="navbar-nav ml-auto">
+         </form> -->
+        <h5 class="ml-3 mt-2 p-2" style="color: #8d4741;">Blemish: Where Perfection Meets Style...</h5>       <!-- Topbar Navbar -->       <ul class="navbar-nav ml-auto">
 
            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
            <li class="nav-item dropdown no-arrow d-sm-none">
@@ -265,12 +263,17 @@
            <li class="nav-item dropdown no-arrow">
              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-
-                 ADMIN
+               
+  
+               <?php 
+                // session_start();
+                $usernamefromlogin = $_SESSION['username'];
+                 
+              ?>
+              <h6 class="mt-1"><?php echo $usernamefromlogin; ?></h6>
 
                </span>
-               <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
-             </a>
+               <i class="fa-solid fa-user ml-2" style="color: #8c4640;"></i>      </a>
              <!-- Dropdown - User Information -->
              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                <a class="dropdown-item" href="#">
