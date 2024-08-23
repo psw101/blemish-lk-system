@@ -47,7 +47,7 @@ if (isset($_POST['click_view_btn']) && isset($_POST['sales_id'])) {
     // Fetch sale details
     $saleQuery = "SELECT sales_id, sale_date, total_amount FROM sales WHERE sales_id = $sales_id";
     $saleResult = mysqli_query($con, $saleQuery);
-    
+
     if ($saleResult && mysqli_num_rows($saleResult) > 0) {
         $saleDetails = mysqli_fetch_assoc($saleResult);
 
@@ -57,14 +57,14 @@ if (isset($_POST['click_view_btn']) && isset($_POST['sales_id'])) {
                        JOIN product p ON si.product_id = p.product_id
                        WHERE si.sales_id = $sales_id";
         $itemsResult = mysqli_query($con, $itemsQuery);
-        
+
         if ($itemsResult) {
             $itemsHtml = '<h4>Sale ID: ' . htmlspecialchars($saleDetails['sales_id']) . '</h4>';
             $itemsHtml .= '<p>Sale Date: ' . htmlspecialchars($saleDetails['sale_date']) . '</p>';
             $itemsHtml .= '<p>Total Amount: $' . htmlspecialchars($saleDetails['total_amount']) . '</p>';
             $itemsHtml .= '<h5>Items:</h5>';
             $itemsHtml .= '<ul class="list-group">';
-            
+
             while ($item = mysqli_fetch_assoc($itemsResult)) {
                 $itemsHtml .= '<li class="list-group-item">' . htmlspecialchars($item['product_name']) . ' - '
                     . htmlspecialchars($item['quantity']) . ' - $' . htmlspecialchars($item['total_price']) . '</li>';
@@ -211,7 +211,7 @@ include_once('./includes/navbar.php');
 </div>
 
 <!-- View Modal -->
- <!-- Modal -->
+<!-- Modal -->
 <div class="modal fade" id="viewSaleModal" tabindex="-1" aria-labelledby="viewSaleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -239,6 +239,7 @@ include_once('./includes/scripts.php');
 ?>
 
 <script>
+    // Fetch product options as HTML for the dropdown list
     async function getProductOptions() {
         const response = await fetch('?action=getProducts');
         const data = await response.json();
@@ -249,10 +250,11 @@ include_once('./includes/scripts.php');
         }
 
         return data.map(product =>
-            `<option value="${product.product_id}" data-price="${product.price}">${product.product_name}</option>`
+            `<option value="${product.product_id}" data-price="${product.sellPrice}">${product.product_name}</option>`
         ).join('');
     }
 
+    // Update the prices based on the selected product, quantity, and discount
     function updatePrices() {
         const discount = parseFloat(document.getElementById('discount').value) || 0;
         const productSelects = document.querySelectorAll('select[name="product_id[]"]');
@@ -274,6 +276,7 @@ include_once('./includes/scripts.php');
         document.getElementById('total_amount').value = totalAmount.toFixed(2);
     }
 
+    // Function to add a new product row
     async function addProductRow() {
         const container = document.getElementById('products-container');
         const productOptions = await getProductOptions();
@@ -281,51 +284,65 @@ include_once('./includes/scripts.php');
         const newRow = document.createElement('div');
         newRow.className = 'form-row';
         newRow.innerHTML = `
-                <div class="form-group col-lg-6">
-                    <label for="product_id">Product</label>
-                    <select class="form-control" name="product_id[]" onchange="updatePrices()" required>
-                        ${productOptions}
-                    </select>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label for="quantity">Quantity</label>
-                    <input type="number" class="form-control" name="quantity[]" oninput="updatePrices()" required>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label for="price">Price</label>
-                    <input type="number" step="0.01" class="form-control" name="price[]" required readonly>
-                </div>
-                <div class="col-12 d-lg-none">
-                    <hr>
-                </div>
-            `;
+            <div class="form-group col-lg-6">
+                <label for="product_id">Product</label>
+                <select class="form-control" name="product_id[]" required>
+                    ${productOptions}
+                </select>
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="quantity">Quantity</label>
+                <input type="number" class="form-control" name="quantity[]" required>
+            </div>
+            <div class="form-group col-lg-3">
+                <label for="price">Price</label>
+                <input type="number" step="0.01" class="form-control" name="price[]" required readonly>
+            </div>
+            <div class="col-12 d-lg-none">
+                <hr>
+            </div>
+        `;
         container.appendChild(newRow);
         updatePrices(); // Update prices for the new row
     }
 
-// view data start
-$(document).ready(function() {
-    $('.view_data').click(function(e) {
-        e.preventDefault();
+    // Event listener for change and input events to handle price updates
+    document.addEventListener('change', function(event) {
+        if (event.target.matches('select[name="product_id[]"]')) {
+            updatePrices();
+        }
+    });
 
-        // Get the sales_id from the clicked row
-        var sales_id = $(this).closest('tr').find('.sales_id_cls').text();
-        //console.log(sales_id);
+    document.addEventListener('input', function(event) {
+        if (event.target.matches('input[name="quantity[]"], #discount')) {
+            updatePrices();
+        }
+    });
 
-        $.ajax({
-            method: "POST",
-            url: "<?php echo $_SERVER['PHP_SELF']; ?>",
-            data: {
-                'click_view_btn': true,
-                'sales_id': sales_id,
-            },
-            success: function(response) {
-                $('.view_sale_data').html(response);
-                $('#viewSaleModal').modal('show');
-            }
+    // Initialize with existing rows
+    updatePrices();
+
+    // view data start
+    $(document).ready(function() {
+        $('.view_data').click(function(e) {
+            e.preventDefault();
+
+            // Get the sales_id from the clicked row
+            var sales_id = $(this).closest('tr').find('.sales_id_cls').text();
+
+            $.ajax({
+                method: "POST",
+                url: "<?php echo $_SERVER['PHP_SELF']; ?>",
+                data: {
+                    'click_view_btn': true,
+                    'sales_id': sales_id,
+                },
+                success: function(response) {
+                    $('.view_sale_data').html(response);
+                    $('#viewSaleModal').modal('show');
+                }
+            });
         });
     });
-});
-// view data end
-
+    // view data end
 </script>
