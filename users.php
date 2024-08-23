@@ -79,6 +79,7 @@ if (isset($_POST['click_view_btn'])) {
         // Assuming you want to return the data in some format (e.g., HTML or JSON)
         // Here is an example of returning the data as HTML
         echo "<p>Name: " . $user_data['username'] . "</p>";
+        echo "<p>Role: " . $user_data['role'] . "</p>";
     } else {
         echo "No data found for this user.";
     }
@@ -149,11 +150,13 @@ if (isset($_POST['update_data'])) {
 //Read Data start
 if (isset($_POST['click_delete_btn'])) {
     $id = $_POST['user_id'];
+    $delete_permissions_query = "DELETE FROM permissions WHERE user_id='$id'";
+    $delete_query_run_permissions = mysqli_query($con, $delete_permissions_query);
 
     $delete_query = "DELETE FROM users WHERE user_id='$id'";
-    $delete_query_run = mysqli_query($con, $delete_query);
+    $delete_query_run_users = mysqli_query($con, $delete_query);
 
-    if ($delete_query_run) {
+    if ($delete_query_run_permissions && $delete_query_run_users) {
         $_SESSION['status'] = "Data deleted successfully !";
         exit;
     } else {
@@ -495,7 +498,7 @@ include('includes/footer.php');
                 
                 success: function(response) {
                     console.log(response);
-                    //window.location.reload();
+                    window.location.reload();
 
                     // $('.view_user_data').html(response);
                     // $('#viewuser').modal('show');
