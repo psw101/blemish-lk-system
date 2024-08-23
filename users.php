@@ -113,12 +113,13 @@ if (isset($_POST['click_edit_btn'])) {
 
 //update data start
 if (isset($_POST['update_data'])) {
-    $id = $_POST['id'];
+    $id = $_POST['user_id'];
     $user_name = $_POST['user_name'];
     $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
     $role = $_POST['role'];
 
-    if ($pass !== $confirmpass) {
+    if ($password !== $confirm_password) {
         $errors[] = "Password and Confirm Password do not match!";
     }
 
@@ -275,7 +276,7 @@ include('includes/navbar.php');
                 <div class="modal-body">
                     <div class="form-group mb-3">
 
-                        <input type="hidden" class="form-control" id="user_id" name="id">
+                        <input type="hidden" class="form-control" id="user_id" name="user_id">
                     </div>
 
                     <div class="form-group mb-3">
@@ -482,7 +483,7 @@ include('includes/footer.php');
             e.preventDefault();
 
             var user_id = $(this).closest('tr').find('.user_id').text();
-            // console.log(supplier_id);
+            console.log(user_id);
 
             $.ajax({
                 method: "POST",
@@ -491,9 +492,10 @@ include('includes/footer.php');
                     'click_delete_btn': true,
                     'user_id': user_id,
                 },
+                
                 success: function(response) {
                     console.log(response);
-                    window.location.reload();
+                    //window.location.reload();
 
                     // $('.view_user_data').html(response);
                     // $('#viewuser').modal('show');
