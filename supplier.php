@@ -111,7 +111,7 @@ if (isset($_POST['click_delete_btn'])) {
 // Search functionality start
 if (isset($_POST['search_supplier'])) {
     $search_query = mysqli_real_escape_string($con, $_POST['search_query']);
-    
+
     // SQL query to search in the supplier table
     $fetch_query = "SELECT * FROM supplier WHERE name LIKE '%$search_query%' OR email LIKE '%$search_query%' OR phone LIKE '%$search_query%' OR address LIKE '%$search_query%'";
 } else {
@@ -254,12 +254,16 @@ include('includes/navbar.php');
     <div class="card mt-4">
         <div class="card-header">
             <h4 class="text-dark fw-bold">MANAGE SUPPLIERS</h4>
-            <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
+            <button type="button" class="btn btn-primary float-right d-sm-block col-sm-auto col-12 p-2" data-toggle="modal" data-target="#insertdata">
                 Add Suppliers
             </button>
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" class="form-inline mt-2">
-                <input type="text" class="form-control mr-2" name="search_query" placeholder="Search...">
-                <button type="submit" name="search_supplier" class="btn btn-primary">Search</button>
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" class="form-inline col-sm-auto col-12 pt-2 pt-sm-0 px-0">
+                <div class="col-12 col-sm-auto p-0">
+                    <input type="text" class="form-control p-2" name="search_query" placeholder="Search...">
+                </div>
+                <div class="col-12 col-sm-auto pt-2 pt-sm-0 px-0 pl-sm-2 pl-0">
+                    <button type="submit" name="search_supplier" class="btn btn-dark pt-sm-2 col-12 col-sm-auto">Search</button>
+                </div>
             </form>
         </div>
 
@@ -323,8 +327,8 @@ include('includes/scripts.php');
 
 <!-- View Modal Script -->
 <script>
-    $(document).ready(function () {
-        $('.view_data').click(function (e) {
+    $(document).ready(function() {
+        $('.view_data').click(function(e) {
             e.preventDefault();
 
             var user_id = $(this).closest('tr').find('.user_id').text();
@@ -335,7 +339,7 @@ include('includes/scripts.php');
                     'click_view_btn': true,
                     'user_id': user_id,
                 },
-                success: function (response) {
+                success: function(response) {
                     $('.view_user_data').html(response);
                     $('#viewuser').modal('show');
                 }
@@ -346,8 +350,8 @@ include('includes/scripts.php');
 
 <!-- Edit Modal Script -->
 <script>
-    $(document).ready(function () {
-        $('.edit_data').click(function (e) {
+    $(document).ready(function() {
+        $('.edit_data').click(function(e) {
             e.preventDefault();
 
             var user_id = $(this).closest('tr').find('.user_id').text();
@@ -358,8 +362,8 @@ include('includes/scripts.php');
                     'click_edit_btn': true,
                     'user_id': user_id,
                 },
-                success: function (response) {
-                    $.each(response, function (key, value) {
+                success: function(response) {
+                    $.each(response, function(key, value) {
                         $('#supplier_id').val(value['id']);
                         $('#name').val(value['name']);
                         $('#email').val(value['email']);
@@ -376,8 +380,8 @@ include('includes/scripts.php');
 
 <!-- Delete Script -->
 <script>
-    $(document).ready(function () {
-        $('.delete_btn').click(function (e) {
+    $(document).ready(function() {
+        $('.delete_btn').click(function(e) {
             e.preventDefault();
 
             var user_id = $(this).closest('tr').find('.user_id').text();
@@ -388,9 +392,9 @@ include('includes/scripts.php');
                     'click_delete_btn': true,
                     'user_id': user_id,
                 },
-                success: function (response) {
+                success: function(response) {
                     alert(response);
-                    location.reload();  // Reload page after deletion
+                    location.reload(); // Reload page after deletion
                 }
             });
         });

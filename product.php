@@ -34,19 +34,20 @@ include('includes/navbar.php');
             <div class="card">
                 <div class="card-header">
                     <h4 class="text-dark fw-bold">MANAGE PRODUCTS</h4>
-                    
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" class="float-left form-inline mt-2">
-                        <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search...">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </form>
-
-                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#insertdata">
+                    <button type="button" class="btn btn-primary float-right d-sm-block col-sm-auto col-12 p-2" data-toggle="modal" data-target="#insertdata">
                         Add Products
                     </button>
-                    
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" class="form-inline col-sm-auto col-12 pt-2 pt-sm-0 px-0">
+                        <div class="col-12 col-sm-auto p-0">
+                            <input type="text" name="search" class="form-control p-2" placeholder="Search...">
+                        </div>
+                        <div class="col-12 col-sm-auto pt-2 pt-sm-0 px-0 pl-sm-2 pl-0">
+                            <button type="submit" class="btn btn-dark pt-sm-2 col-12 col-sm-auto">Search</button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="card-body bg-light" style="max-height: 60vh; overflow-y: auto;">
+                <div class="card-body" style="max-height: 60vh; overflow-y: auto;">
                     <table class="table table-bordered table-hover" width="100%" p-3>
                         <thead>
                             <tr>
@@ -81,10 +82,10 @@ include('includes/navbar.php');
                                             <a href="#" class="btn btn-danger btn-sm delete_btn" data-id="<?php echo $row['product_id']; ?>">Delete</a>
                                         </td>
                                     </tr>
-                            <?php
+                                <?php
                                 }
                             } else {
-                            ?>
+                                ?>
                                 <tr>
                                     <td colspan="8">No Record Found</td>
                                 </tr>
