@@ -43,7 +43,7 @@
      <hr class="sidebar-divider my-0">
 
      <li class="nav-item">
-       <a class="nav-link" href="orders.php">
+       <a class="nav-link" href="orders-new.php">
        <i class="fa-solid fa-pen-to-square"></i>
          <span>Orders</span></a>
 
