@@ -9,6 +9,10 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 }
 
 
+// Initialize the variables - these are used for alert messages
+$showModal = false;
+$modalMessage = "";
+
 // Include the configuration file
 include_once './session-config.php';
 include_once './popup-util.php';
@@ -18,7 +22,6 @@ $username_err = $password_err = "";
 
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
   // Validate username
   if (empty(trim($_POST["username"]))) {
     $username_err = "Please enter a username.";
@@ -41,6 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Prepare and execute the SQL statement with prepared statements to prevent SQL injection
     include_once './dbcon.php';
+
+
+    // Prepare the SQL statement
     $sql = "SELECT username, password FROM users WHERE username = ?";
     if ($stmt = mysqli_prepare($con, $sql)) {
       // Bind the input parameter to the prepared statement
@@ -60,29 +66,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($password_hash === $db_password_hash) {
               // Password is correct, so start a new session
               $_SESSION['loggedin'] = true;
-              $_SESSION['username'] = $username;  
-              $_SESSION['user_id'] = $user_id;          
-              
+              $_SESSION['username'] = $username;
+              $_SESSION['user_id'] = $user_id;
+
               header("Location: ./index.php");
               exit();
             } else {
-              display_alert("Invalid password!", false);
+              $showModal = true;
+              $modalMessage = "Password is incorrect!";
             }
           }
         } else {
-          display_alert("Username not found!", false);
+          $showModal = true;
+          $modalMessage = "Username is incorrect!";
         }
       } else {
-        display_alert("Oops! Something went wrong. Please try again later.", false);
+        $showModal = true;
+        $modalMessage = "Oops! Something went wrong. Please try again later.";
       }
 
       // Close the statement
       mysqli_stmt_close($stmt);
     }
+  }else{
+    $showModal = true;
+    $modalMessage = "Please enter a username and password.";
   }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -92,11 +103,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blemish.lk - Login Page</title>
   <link rel="icon" href="./img/site-logo.png" type="image/png">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
   <style>
     body {
       background-color: #077fa9;
+    }
+    .modal-header-custom {
+      background-color: #f8d7da; /* Light red background */
+      color: #721c24; /* Dark red text */
     }
   </style>
 </head>
@@ -109,8 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <div class="card" style="border-radius: 1rem;">
             <div class="row g-0">
               <div class="col-md-6 col-lg-5 d-none d-md-block">
-                <img src="./img/login-page-fashion.jpg"
-                  alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+                <img src="./img/login-page-fashion.jpg" alt="login form" class="img-fluid " style="border-radius: 1rem 0 0 1rem;" />
               </div>
               <div class="col-md-6 col-lg-7 d-flex align-items-center">
                 <div class="card-body p-4 p-lg-5 text-black">
@@ -135,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="pt-1 mb-4">
-                      <button class="btn btn-primary  btn-block btn-lg px-5" type="submit">Login</button>
+                      <button class="btn btn-primary btn-block btn-lg px-5" type="submit">Login</button>
                     </div>
 
                     <a class="small text-muted" href="#!">Forgot password?</a>
@@ -151,9 +165,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
   </section>
 
+  <!-- Modal to show messages -->
+  <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header modal-header-custom">
+          <h5 class="modal-title" id="alertModalLabel">Alert</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <?php echo $modalMessage; ?>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Include Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!-- Show the modal if the $showModal variable is set to true -->
+  <?php if ($showModal): ?>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var myModal = new bootstrap.Modal(document.getElementById('alertModal'));
+        myModal.show();
+      });
+    </script>
+  <?php endif; ?>
 </body>
-
 </html>
