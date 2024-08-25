@@ -378,7 +378,7 @@ include('includes/navbar.php');
                                             <a href="#" class="btn btn-success btn-sm edit_data">Edit</a>
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-danger btn-sm delete_btn" onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
+                                            <a href="#" class="btn btn-danger btn-sm delete_btn">Delete</a>
                                         </td>
                                     </tr>
                                 <?php
@@ -484,27 +484,31 @@ include('includes/footer.php');
     $(document).ready(function() {
         $('.delete_btn').click(function(e) {
             e.preventDefault();
+            var confirmDelete = confirm("Are you sure you want to delete this record?");
 
-            var user_id = $(this).closest('tr').find('.user_id').text();
-            console.log(user_id);
+            if(confirmDelete){
+                var user_id = $(this).closest('tr').find('.user_id').text();
+                console.log(user_id);
 
-            $.ajax({
-                method: "POST",
-                url: "users.php",
-                data: {
-                    'click_delete_btn': true,
-                    'user_id': user_id,
-                },
-                
-                success: function(response) {
-                    console.log(response);
-                    window.location.reload();
+                $.ajax({
+                    method: "POST",
+                    url: "users.php",
+                    data: {
+                        'click_delete_btn': true,
+                        'user_id': user_id,
+                    },
+                    
+                    success: function(response) {
+                        console.log(response);
+                        window.location.reload();
 
-                    // $('.view_user_data').html(response);
-                    // $('#viewuser').modal('show');
+                        // $('.view_user_data').html(response);
+                        // $('#viewuser').modal('show');
 
-                }
-            });
+                    }
+                });
+            }
+            
         })
     });
     //Delete data end
