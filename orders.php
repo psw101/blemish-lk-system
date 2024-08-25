@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once('./dbcon.php');
-include_once('./popup-util.php');
+
 // view order
 if (isset($_POST['view_order'])) {
     $order_id = $_POST['id'];

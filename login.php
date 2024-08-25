@@ -15,7 +15,6 @@ $modalMessage = "";
 
 // Include the configuration file
 include_once './session-config.php';
-include_once './popup-util.php';
 // Initialize variables
 $username = $password = "";
 $username_err = $password_err = "";
