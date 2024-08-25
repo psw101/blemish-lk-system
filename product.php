@@ -13,10 +13,18 @@ if (isset($_POST['save_supp_data'])) {
     
 
     $insert_query = "INSERT INTO product(product_name,product_des,categories_id,sellPrice) VALUES ('" . mysqli_real_escape_string($con, $productname) . "', '" . mysqli_real_escape_string($con, $productdes) . "', '" . mysqli_real_escape_string($con, $productcategory) . "', '" . mysqli_real_escape_string($con, $sellprice) . "')";
+    $set_initial_inventory_query = "INSERT INTO inventory(product_id,product_name, quantity_in_stock) VALUES (LAST_INSERT_ID(), ? , 0)";
+    $stmt_for_inventory = $con->prepare($set_initial_inventory_query);
+    $stmt_for_inventory->bind_param('i',mysqli_real_escape_string($con, $productname));
+
+
     $insert_query_run = mysqli_query($con, $insert_query);
 
+    $_SESSION['status'] = "Insertion of data failed!";
     if ($insert_query_run) {
-        $_SESSION['status'] = "Data inserted successfully !";
+        if($stmt_for_inventory->execute()){
+            $_SESSION['status'] = "Data inserted successfully !";
+        }
     } else {
         $_SESSION['status'] = "Insertion of data failed!";
     }
@@ -212,7 +220,7 @@ include('includes/navbar.php');
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" name="save_supp_data" class="btn btn-primary">Add Supplier</button>
+                    <button type="submit" name="save_supp_data" class="btn btn-primary">Add Product</button>
                 </div>
             </form>
         </div>
