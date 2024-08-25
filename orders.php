@@ -372,7 +372,7 @@ include('includes/navbar.php');
                 <div class="card-header">
                     <h4 class="text-dark font-weight-bold">Orders</h4>
                 </div>
-                <div class="card-body bg-light" style="max-height: 60vh;
+                <div class="card-body  " style="max-height: 60vh;
                 overflow-y: auto;">
                     <table class="table table-bordered table-hover" width="100%" p-3>
                         <thead>
@@ -443,7 +443,7 @@ include('includes/navbar.php');
                 <div class="card-header">
                     <h4 class="text-dark font-weight-bold">Order Items</h4>
                 </div>
-                <div class="card-body bg-light" style="max-height: 60vh;
+                <div class="card-body" style="max-height: 60vh;
                 overflow-y: auto;">
                     <table class="table table-bordered table-hover" width="100%" p-3>
                         <thead>

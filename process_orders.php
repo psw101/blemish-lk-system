@@ -23,11 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $prices = $_POST['price'];
 
             $orderItemsQuery = "INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES ";
+
+            $updateInventoryQuery = "UPDATE inventory SET quantity_in_stock = quantity_in_stock + ? WHERE product_id = ?";
+            $stmt = $con->prepare($updateInventoryQuery);
+
             $orderItemsValues = [];
 
             for ($i = 0; $i < count($product_ids); $i++) {
                 $product_id = intval($product_ids[$i]);
                 $quantity = intval($quantities[$i]);
+
+                $stmt->bind_param("ii", $quantity , $product_id);
+                $stmt->execute();
+
                 $price = floatval($prices[$i]);
                 $total_price = $quantity * $price;
 
@@ -43,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // If there's an error inserting order items
                 echo "<script>alert('Error processing order items: " . mysqli_error($con) . "'); window.location.href='orders-new.php';</script>";
             }
+            $stmt->close();
         } else {
             // If there's an error inserting the order
             echo "<script>alert('Error processing order: " . mysqli_error($con) . "'); window.location.href='orders-new.php';</script>";
