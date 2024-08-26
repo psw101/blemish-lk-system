@@ -40,9 +40,8 @@ CREATE TABLE product (
     product_des VARCHAR(255) NOT NULL,
     categories_id INT(11) NOT NULL,
     sellPrice VARCHAR(255) NOT NULL,
-    FOREIGN KEY (categories_id) REFERENCES categories(categories_id)
+    FOREIGN KEY (categories_id) REFERENCES categories(categories_id) ON DELETE CASCADE
 );
-
 -- Inventory Table
 CREATE TABLE inventory (
     inventory_id INT AUTO_INCREMENT PRIMARY KEY,

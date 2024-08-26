@@ -1,5 +1,4 @@
 <?php
-session_start();
 require('dbcon.php');
 include_once('./access.php');
 
