@@ -17,7 +17,7 @@ CREATE TABLE permissions (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-
+-- Supplier Table
 CREATE TABLE supplier (
     id INT(11) NOT NULL AUTO_INCREMENT,
     name VARCHAR(191) NOT NULL,
@@ -27,42 +27,37 @@ CREATE TABLE supplier (
     PRIMARY KEY (id)
 );
 
-
-CREATE TABLE `categories` (
-  `categories_id` int(11) PRIMARY KEY AUTO_INCREMENT ,
-  `categories_name` varchar(255) NOT NULL
-  
+-- Categories Table
+CREATE TABLE categories (
+    categories_id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    categories_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE `product` (
-  `product_id` int(11) PRIMARY KEY NOT NULL,
-  `product_name` varchar(255) NOT NULL,
-  `product_des` varchar(255) NOT NULL,
-  `categories_id` int(11) NOT NULL,
-  `sellPrice` varchar(255) NOT NULL
-);
-
--- Products Table
-CREATE TABLE products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
+-- Product Table
+CREATE TABLE product (
+    product_id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     product_name VARCHAR(255) NOT NULL,
-    category_id INT,
-    supplier_id INT,
-    price DECIMAL(10, 2) NOT NULL,
+    product_des VARCHAR(255) NOT NULL,
+    categories_id INT(11) NOT NULL,
+    sellPrice VARCHAR(255) NOT NULL,
+    FOREIGN KEY (categories_id) REFERENCES categories(categories_id) ON DELETE CASCADE
+);
+-- Inventory Table
+CREATE TABLE inventory (
+    inventory_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT(11) NOT NULL,
+    product_name VARCHAR(255) NOT NULL,    
     quantity_in_stock INT NOT NULL,
-    size VARCHAR(50),
-    color VARCHAR(50),
-    description TEXT,
-    FOREIGN KEY (category_id) REFERENCES categories(categories_id),
-    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
-
--- Orders Table (Modified with 'status' column)
+-- Orders Table (Modified with 'supplier_id' column)
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     order_date DATE NOT NULL,
-    total_amount DECIMAL(10, 2) NOT NULL
+    total_amount DECIMAL(10, 2) NOT NULL,
+    supplier_id INT,
+    FOREIGN KEY (supplier_id) REFERENCES supplier(id)
 );
 
 -- Order Items Table
@@ -73,21 +68,26 @@ CREATE TABLE order_items (
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
--- Inventory Table
-CREATE TABLE inventory (
-    inventory_id INT AUTO_INCREMENT PRIMARY KEY,
+
+-- Sales Table
+CREATE TABLE sales (
+    sales_id INT AUTO_INCREMENT PRIMARY KEY,
+    sale_date DATE NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL
+);
+
+-- Sales Items Table
+CREATE TABLE sales_items (
+    sales_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    sales_id INT,
     product_id INT,
     quantity INT NOT NULL,
-    remarks TEXT,
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    price DECIMAL(10, 2) NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (sales_id) REFERENCES sales(sales_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
-
-
-
-
-
-

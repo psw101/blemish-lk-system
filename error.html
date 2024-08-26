@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Connection Lost</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #eeeeee; /* Light background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .alert-box {
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .logo {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+        .website-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="alert-box text-center">
+        <!-- Website Logo and Name -->
+        <img src="./img/site-logo.png" alt="Website Logo" class="logo">
+        <div class="website-name">blemish.lk</div>
+
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Database Connection Lost</h4>
+            <p>It seems we are unable to connect to the database at the moment. Please contact the system administrator for assistance.</p>
+            <hr>
+            <p class="mb-0">For immediate support, please reach out to <strong>admin@blemish.lk</strong></p>
+        </div>
+        <a href="login.php" class="btn btn-primary btn-block mt-3">Go Back to Login</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,3 +1,16 @@
+<?php
+
+// Include the configuration file
+include_once './session-config.php';
+
+// Check if the user is logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+  // Redirect to login page
+  header("Location: login.php");
+  exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +31,6 @@
 
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
-  
 
 </head>
 
