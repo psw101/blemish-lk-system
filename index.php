@@ -7,6 +7,26 @@ use includes\navbar;
 include_once 'includes/header.php';
 include_once 'includes/navbar.php';
 
+// Fetch total products count
+$result = $con->query("SELECT COUNT(*) AS total_products FROM product");
+$totalProducts = $result->fetch_assoc()['total_products'];
+
+// Fetch total categories count
+$result = $con->query("SELECT COUNT(*) AS total_categories FROM categories");
+$totalCategories = $result->fetch_assoc()['total_categories'];
+
+// Fetch total sales amount
+$result = $con->query("SELECT SUM(total_amount) AS total_sales FROM sales");
+$totalSales = $result->fetch_assoc()['total_sales'];
+
+// Fetch total orders amount
+$result = $con->query("SELECT SUM(total_amount) AS total_orders FROM orders");
+$totalOrders = $result->fetch_assoc()['total_orders'];
+
+// Fetch total low stock products count (e.g., products with less than 10 units in stock)
+$result = $con->query("SELECT COUNT(*) AS low_stock_count FROM inventory WHERE quantity_in_stock < 10");
+$lowStockCount = $result->fetch_assoc()['low_stock_count'];
+
 ?>
 
 <!-- Begin Page Content -->
@@ -192,6 +212,74 @@ include_once 'includes/navbar.php';
         </div>
     </div>
   </div>
+
+  <div class="container mt-5">
+        <div class="row">
+            <!-- Total Products Card -->
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Products</h5>
+                        <p class="card-text h3 text-primary"><?php echo $totalProducts; ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Categories Card -->
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Categories</h5>
+                        <p class="card-text h3 text-primary"><?php echo $totalCategories; ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Sales Card -->
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Sales Amount</h5>
+                        <p class="card-text h3 text-success">$<?php echo number_format($totalSales, 2); ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Total Orders Card -->
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Orders Amount</h5>
+                        <p class="card-text h3 text-success">$<?php echo number_format($totalOrders, 2); ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Stock Alerts Card -->
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Low Stock Products</h5>
+                        <p class="card-text h3 text-danger"><?php echo $lowStockCount; ?></p>
+                        <p class="text-muted">Products with less than 10 units in stock</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholder for Future Insights -->
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Future Insights</h5>
+                        <p class="card-text h3 text-primary">N/A</p>
+                        <p class="text-muted">More insights to be added</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
   <!-- Content Row -->
   <div class="row">

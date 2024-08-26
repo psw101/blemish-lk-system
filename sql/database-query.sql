@@ -88,7 +88,7 @@ CREATE TABLE sales_items (
     product_id INT,
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    total_price DECIMAL(10, 2) AS (quantity * price) STORED,
+    total_price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (sales_id) REFERENCES sales(sales_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );

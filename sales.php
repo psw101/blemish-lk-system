@@ -125,9 +125,9 @@ include_once('./includes/navbar.php');
                         <!-- Sales Items Table Fields -->
                         <div id="products-container">
                             <div class="form-row">
-                                <div class="form-group col-lg-6">
+                                <div class="form-group col-lg-6 product-id-cls">
                                     <label for="product_id">Product</label>
-                                    <select class="form-control" id="product_id" name="product_id[]" onchange="updatePrices()" required>
+                                    <select class="form-control product-select" id="product_id" name="product_id[]" onchange="updatePrices()" required>
                                         <?php
                                         $products = json_decode(getProductsJson(), true);
                                         foreach ($products as $product) {
@@ -139,7 +139,10 @@ include_once('./includes/navbar.php');
 
                                 <div class="form-group col-lg-3">
                                     <label for="quantity">Quantity</label>
-                                    <input type="number" class="form-control" id="quantity" name="quantity[]" oninput="updatePrices()" required>
+                                    <input type="number" class="form-control quantity-input" id="quantity" name="quantity[]" oninput="updatePrices()" required>
+                                    <div class="invalid-feedback">
+                                        Value exceeds the maximum limit.
+                                    </div>
                                 </div>
 
                                 <div class="form-group col-lg-3">
@@ -240,109 +243,142 @@ include_once('./includes/scripts.php');
 
 <script>
     // Fetch product options as HTML for the dropdown list
-    async function getProductOptions() {
-        const response = await fetch('?action=getProducts');
-        const data = await response.json();
+async function getProductOptions() {
+    const response = await fetch('?action=getProducts');
+    const data = await response.json();
 
-        if (data.error) {
-            console.error(data.error);
-            return '';
-        }
-
-        return data.map(product =>
-            `<option value="${product.product_id}" data-price="${product.sellPrice}">${product.product_name}</option>`
-        ).join('');
+    if (data.error) {
+        console.error(data.error);
+        return '';
     }
 
-    // Update the prices based on the selected product, quantity, and discount
-    function updatePrices() {
-        const discount = parseFloat(document.getElementById('discount').value) || 0;
-        const productSelects = document.querySelectorAll('select[name="product_id[]"]');
-        const quantityInputs = document.querySelectorAll('input[name="quantity[]"]');
-        const priceInputs = document.querySelectorAll('input[name="price[]"]');
-        let totalAmount = 0;
+    return data.map(product =>
+        `<option value="${product.product_id}" data-price="${product.sellPrice}">${product.product_name}</option>`
+    ).join('');
+}
 
-        productSelects.forEach((select, index) => {
-            const selectedOption = select.options[select.selectedIndex];
-            const basePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
-            const quantity = parseFloat(quantityInputs[index].value) || 1;
-            const finalPrice = basePrice * ((100 - discount) / 100);
-            priceInputs[index].value = finalPrice.toFixed(2);
+// Update the prices based on the selected product, quantity, and discount
+function updatePrices() {
+    const discount = parseFloat(document.getElementById('discount').value) || 0;
+    const productSelects = document.querySelectorAll('select[name="product_id[]"]');
+    const quantityInputs = document.querySelectorAll('input[name="quantity[]"]');
+    const priceInputs = document.querySelectorAll('input[name="price[]"]');
+    let totalAmount = 0;
 
-            // Update total amount
-            totalAmount += finalPrice * quantity;
+    productSelects.forEach((select, index) => {
+        const selectedOption = select.options[select.selectedIndex];
+        const basePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        const quantity = parseFloat(quantityInputs[index].value) || 1;
+        const finalPrice = basePrice * ((100 - discount) / 100);
+        priceInputs[index].value = finalPrice.toFixed(2);
+
+        // Update total amount
+        totalAmount += finalPrice * quantity;
+
+        // Log the selected product ID
+        console.log('Selected Product ID:', select.value);
+    });
+
+    document.getElementById('total_amount').value = totalAmount.toFixed(2);
+}
+
+// Function to add a new product row
+async function addProductRow() {
+    const container = document.getElementById('products-container');
+    const productOptions = await getProductOptions();
+
+    const newRow = document.createElement('div');
+    newRow.className = 'form-row';
+    newRow.innerHTML = `
+        <div class="form-group col-lg-6 product-id-cls">
+            <label for="product_id">Product</label>
+            <select class="form-control product-select" name="product_id[]" required>
+                ${productOptions}
+            </select>
+        </div>
+        <div class="form-group col-lg-3">
+            <label for="quantity">Quantity</label>
+            <input type="number" class="form-control quantity-input" name="quantity[]" required>
+            <div class="invalid-feedback">
+                Value exceeds the maximum limit.
+            </div>
+        </div>
+        <div class="form-group col-lg-3">
+            <label for="price">Price</label>
+            <input type="number" step="0.01" class="form-control" name="price[]" required readonly>
+        </div>
+        <div class="col-12 d-lg-none">
+            <hr>
+        </div>
+    `;
+    container.appendChild(newRow);
+    updatePrices(); // Update prices for the new row
+}
+
+// Event listener for change and input events to handle price updates
+document.addEventListener('change', function(event) {
+    if (event.target.matches('select[name="product_id[]"]')) {
+        updatePrices();
+    }
+});
+
+document.addEventListener('input', function(event) {
+    if (event.target.matches('input[name="quantity[]"], #discount')) {
+        updatePrices();
+    }
+});
+
+// Initialize with existing rows
+updatePrices();
+
+// view data start
+$(document).ready(function() {
+    $('.view_data').click(function(e) {
+        e.preventDefault();
+
+        // Get the sales_id from the clicked row
+        var sales_id = $(this).closest('tr').find('.sales_id_cls').text();
+
+        $.ajax({
+            method: "POST",
+            url: "<?php echo $_SERVER['PHP_SELF']; ?>",
+            data: {
+                'click_view_btn': true,
+                'sales_id': sales_id,
+            },
+            success: function(response) {
+                $('.view_sale_data').html(response);
+                $('#viewSaleModal').modal('show');
+            }
         });
+    });
 
-        document.getElementById('total_amount').value = totalAmount.toFixed(2);
-    }
+    // Event delegation to handle changes in select elements
+    $('#products-container').on('change', '.product-select', function() {
+        var selectedProductId = $(this).val(); // Get the selected product ID
+        console.log('Selected Product ID (via jQuery):', selectedProductId); // Output to console
+    });
 
-    // Function to add a new product row
-    async function addProductRow() {
-        const container = document.getElementById('products-container');
-        const productOptions = await getProductOptions();
+    // PHP-generated max value
+    var maxValue = <?php echo $maxValue = 100; ?>; // Replace 100 with your PHP logic
 
-        const newRow = document.createElement('div');
-        newRow.className = 'form-row';
-        newRow.innerHTML = `
-            <div class="form-group col-lg-6">
-                <label for="product_id">Product</label>
-                <select class="form-control" name="product_id[]" required>
-                    ${productOptions}
-                </select>
-            </div>
-            <div class="form-group col-lg-3">
-                <label for="quantity">Quantity</label>
-                <input type="number" class="form-control" name="quantity[]" required>
-            </div>
-            <div class="form-group col-lg-3">
-                <label for="price">Price</label>
-                <input type="number" step="0.01" class="form-control" name="price[]" required readonly>
-            </div>
-            <div class="col-12 d-lg-none">
-                <hr>
-            </div>
-        `;
-        container.appendChild(newRow);
-        updatePrices(); // Update prices for the new row
-    }
+    // Event delegation: Attach event listener to the container for input validation
+    $('#products-container').on('input', '.quantity-input', function() {
+        var currentValue = parseInt($(this).val(), 10); // Get the current input value
 
-    // Event listener for change and input events to handle price updates
-    document.addEventListener('change', function(event) {
-        if (event.target.matches('select[name="product_id[]"]')) {
-            updatePrices();
+        if (isNaN(currentValue)) {
+            currentValue = 0;
+        }
+
+        // Check if the current value is less than or equal to the max value
+        if (currentValue > maxValue) {
+            $(this).addClass('is-invalid'); // Add Bootstrap class for invalid input
+        } else {
+            $(this).removeClass('is-invalid'); // Remove invalid class if value is valid
         }
     });
+});
+// view data end
+</script>
 
-    document.addEventListener('input', function(event) {
-        if (event.target.matches('input[name="quantity[]"], #discount')) {
-            updatePrices();
-        }
-    });
-
-    // Initialize with existing rows
-    updatePrices();
-
-    // view data start
-    $(document).ready(function() {
-        $('.view_data').click(function(e) {
-            e.preventDefault();
-
-            // Get the sales_id from the clicked row
-            var sales_id = $(this).closest('tr').find('.sales_id_cls').text();
-
-            $.ajax({
-                method: "POST",
-                url: "<?php echo $_SERVER['PHP_SELF']; ?>",
-                data: {
-                    'click_view_btn': true,
-                    'sales_id': sales_id,
-                },
-                success: function(response) {
-                    $('.view_sale_data').html(response);
-                    $('#viewSaleModal').modal('show');
-                }
-            });
-        });
-    });
-    // view data end
 </script>

@@ -68,6 +68,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               $_SESSION['username'] = $username;
               $_SESSION['user_id'] = $user_id;
 
+              // find and assign user role
+              $sql = "SELECT role FROM users WHERE username = ?";
+              if ($stmt = mysqli_prepare($con, $sql)) {
+                // Bind the input parameter to the prepared statement
+                mysqli_stmt_bind_param($stmt, "s", $param_username);
+                $param_username = $username;
+
+                // Execute the statement
+                if (mysqli_stmt_execute($stmt)) {
+                  mysqli_stmt_store_result($stmt);
+                  // Check if the username exists, if yes then verify the password
+                  if (mysqli_stmt_num_rows($stmt) == 1) {
+                    // Bind the result variables
+                    mysqli_stmt_bind_result($stmt, $db_role);
+
+                    if (mysqli_stmt_fetch($stmt)) {
+                      $_SESSION['role'] = $db_role;
+                    }
+                  }
+                }
+              }
+
               header("Location: ./index.php");
               exit();
             } else {
